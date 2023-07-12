@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required (VERSION 3.26)
+cmake_minimum_required (VERSION 3.22)
 
 project (greptimedb-client-cpp)
 
@@ -24,5 +24,10 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif ()
 
+file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp")
+file(GLOB_RECURSE headers CONFIGURE_DEPENDS "*.h")
 
-add_subdirectory(contrib/greptime-proto/c++)
+add_library(greptimedb ${headers} ${sources})
+
+target_include_directories(greptimedb PRIVATE contrib/greptime-proto/c++)
+
