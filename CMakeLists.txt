@@ -14,20 +14,13 @@
 
 cmake_minimum_required (VERSION 3.22)
 
-project (greptimedb-client-cpp)
+project (greptimedb-client-cpp VERSION 0.1 LANGUAGES CXX)
 
-if (APPLE)
-    set(CMAKE_MACOSX_RPATH 1)
-endif (APPLE)
+file(GLOB_RECURSE sources "*.cpp")
+file(GLOB_RECURSE headers "*.h")
 
-if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
-endif ()
-
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp")
-file(GLOB_RECURSE headers CONFIGURE_DEPENDS "*.h")
+include_directories(SYSTEM contrib/greptime-proto/c++)
 
 add_library(greptimedb ${headers} ${sources})
-
-target_include_directories(greptimedb PRIVATE contrib/greptime-proto/c++)
+target_include_directories(greptimedb PUBLIC contrib/greptime-proto/c++)
 

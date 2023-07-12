@@ -1,3 +1,4 @@
 [submodule "contrib/greptime-proto"]
 	path = contrib/greptime-proto
 	url = https://github.com/v0y4g3r/greptime-proto.git
+    branch = feat/cmake

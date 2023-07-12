@@ -13,3 +13,4 @@
 // limitations under the License.
 
 #include "database.h"
+#include <greptime/v1/column.pb.h>
