@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 project(greptimedb_client_lib)
 
 file(GLOB_RECURSE OUTPUT_SOURCES "*.h" "*.cpp")
