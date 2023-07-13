@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+project(greptime-client-test)
 
-include_directories(greptime-proto/c++)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/greptime-proto/c++)
+file(GLOB_RECURSE OUTPUT_SOURCES "*.cpp")
+
+add_executable(${PROJECT_NAME} ${OUTPUT_SOURCES})
+
+# target_include_directories(${PROJECT_NAME} PUBLIC ${ROOT_SRC_DIR})
+# set(CONTRIB_DIR ${ROOT_SRC_DIR}/contrib/greptime-proto/c++)
+# target_include_directories(${PROJECT_NAME} PRIVATE ${CONTRIB_DIR})
+
+target_link_libraries(${PROJECT_NAME} PUBLIC greptimedb_client_lib)

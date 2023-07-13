@@ -16,9 +16,16 @@
 #ifndef GREPTIMEDB_CLIENT_CPP_DATABASE_H
 #define GREPTIMEDB_CLIENT_CPP_DATABASE_H
 
+#include <iostream>
+#include <greptime/v1/column.pb.h>
+
 
 namespace greptime {
     class Database {
+    public:
+        void hello() {
+            std::cout << "Hello Database" << std::endl;
+        }
 
     };
 }
