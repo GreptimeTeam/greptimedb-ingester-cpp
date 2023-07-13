@@ -25,3 +25,4 @@ set(CONTRIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/contrib/greptime-proto/c++)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CONTRIB_DIR})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC greptime-proto-cpp)
+

@@ -23,3 +23,4 @@ set(CONTRIB_DIR ${ROOT_SRC_DIR}/contrib/greptime-proto/c++)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CONTRIB_DIR})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC greptimedb_client_lib)
+
