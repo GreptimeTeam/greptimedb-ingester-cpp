@@ -16,6 +16,10 @@ project(greptimedb_client_lib)
 
 file(GLOB_RECURSE OUTPUT_SOURCES "*.h" "*.cpp")
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+include_directories(${PROTOBUF_INCLUDE_DIR})
+
 add_library(${PROJECT_NAME} ${OUTPUT_SOURCES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${GREPTIMEDB_ROOT_DIR})
@@ -24,5 +28,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${GREPTIMEDB_ROOT_DIR})
 set(CONTRIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/contrib/greptime-proto/c++)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CONTRIB_DIR})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC greptime-proto-cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC greptime-proto-cpp protobuf)
 
