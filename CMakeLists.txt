@@ -13,30 +13,24 @@
 # limitations under the License.
 
 cmake_minimum_required (VERSION 3.22)
-
 project (greptimedb-client-cpp VERSION 0.1 LANGUAGES CXX)
-
-file(GLOB_RECURSE sources "*.cpp")
-file(GLOB_RECURSE headers "*.h")
-
-include_directories(SYSTEM contrib/greptime-proto/c++)
-
-add_library(greptimedb ${headers} ${sources})
-target_include_directories(greptimedb PUBLIC contrib/greptime-proto/c++ .)
 
 # generate complie_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+#=================== global packet ===================#
+# file(GLOB_RECURSE sources "*.cpp")
+# file(GLOB_RECURSE headers "*.h")
+
+# include_directories(SYSTEM contrib/greptime-proto/c++)
+
+# add_library(greptimedb ${headers} ${sources})
+# target_include_directories(greptimedb PUBLIC contrib/greptime-proto/c++)
+#=================== global packet ===================#
+
 # set project root
-set(GREPTIMEDB_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(GREPTIMEDB_CLIENT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # sub CMakeLists.txt
 add_subdirectory(contrib)
-add_subdirectory(examples)
 add_subdirectory(src)
-
-# test main.cpp will delete
-add_executable(main main.cpp)
-target_include_directories(main PUBLIC ${GREPTIMEDB_ROOT_DIR})
-target_link_libraries(main PUBLIC greptimedb_client_lib)
-
