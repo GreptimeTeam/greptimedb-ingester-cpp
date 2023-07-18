@@ -79,3 +79,12 @@ target_link_libraries(${CLIENT_TABLE} PUBLIC greptime_proto_cpp_lib)
 # target_link_libraries(${CLIENT_TABLE} PUBLIC ${PROTOBUF_LIBRARIES})
 target_link_libraries(${CLIENT_TABLE} PUBLIC ${GRPCPP_LIBRARIES})
 target_link_libraries(${CLIENT_TABLE} PUBLIC grpc grpc++)
+
+#================== insert into stream ==================
+set(CLIENT_STREAM client_stream)
+add_executable(${CLIENT_STREAM} client_stream.cpp)
+target_include_directories(${CLIENT_STREAM} PUBLIC ${CONTRIB_DIR})
+target_link_libraries(${CLIENT_STREAM} PUBLIC greptime_proto_cpp_lib)
+# target_link_libraries(${CLIENT_STREAM} PUBLIC ${PROTOBUF_LIBRARIES})
+target_link_libraries(${CLIENT_STREAM} PUBLIC ${GRPCPP_LIBRARIES})
+target_link_libraries(${CLIENT_STREAM} PUBLIC grpc grpc++)
