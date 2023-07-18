@@ -25,19 +25,19 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROTOBUF_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROTOBUF_LIBRARIES})
 
 # grpc
-# find_package(gRPC REQUIRED)
+find_package(gRPC REQUIRED)
 
-# if(gRPC_FOUND)
-#     message(STATUS "Found gRPC++: ${gRPC_VERSION}")
-#     set(GRPCPP_INCLUDE_DIRS $<TARGET_PROPERTY:gRPC::grpc++,INTERFACE_INCLUDE_DIRECTORIES>)
-#     set(GRPCPP_LIBRARIES $<TARGET_PROPERTY:gRPC::grpc++_unsecure,INTERFACE_LINK_LIBRARIES>)
-#     set(GRPCPP_PLUGIN_EXEC $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
-# else()
-#     find_package(PkgConfig REQUIRED)
-#     pkg_search_module(GRPCPP REQUIRED QUIET grpc++_unsecure)
-#     set(GRPCPP_PLUGIN_EXEC ${GRPCPP_PREFIX}/bin/grpc_cpp_plugin)
-#     message(STATUS "Found gRPC++: ${GRPCPP_LINK_LIBRARIES} (found version \"${GRPCPP_VERSION}\")")
-# endif()
+if(gRPC_FOUND)
+    message(STATUS "Found gRPC++: ${gRPC_VERSION}")
+    set(GRPCPP_INCLUDE_DIRS $<TARGET_PROPERTY:gRPC::grpc++,INTERFACE_INCLUDE_DIRECTORIES>)
+    set(GRPCPP_LIBRARIES $<TARGET_PROPERTY:gRPC::grpc++_unsecure,INTERFACE_LINK_LIBRARIES>)
+    set(GRPCPP_PLUGIN_EXEC $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
+else()
+    find_package(PkgConfig REQUIRED)
+    pkg_search_module(GRPCPP REQUIRED QUIET grpc++_unsecure)
+    set(GRPCPP_PLUGIN_EXEC ${GRPCPP_PREFIX}/bin/grpc_cpp_plugin)
+    message(STATUS "Found gRPC++: ${GRPCPP_LINK_LIBRARIES} (found version \"${GRPCPP_VERSION}\")")
+endif()
 
 # message(STATUS "==================Found gRPC++: ${gRPC_VERSION}==================")
 
@@ -46,3 +46,22 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${PROTOBUF_LIBRARIES})
 
 
 # target_include_directories(${PROEJCT_NAME} PUBLIC ${GRPC})
+
+
+#================== insert into column ==================
+# set(CLIENT_COLUMN client_column)
+# add_executable(${CLIENT_COLUMN} client_column.cpp)
+# target_include_directories(${CLIENT_COLUMN} PUBLIC ${CONTRIB_DIR})
+# target_link_libraries(${CLIENT_COLUMN} PUBLIC greptime_proto_cpp_lib)
+# # target_link_libraries(${CLIENT_COLUMN} PUBLIC ${PROTOBUF_LIBRARIES})
+# target_link_libraries(${CLIENT_COLUMN} PUBLIC ${GRPCPP_LIBRARIES})
+# target_link_libraries(${CLIENT_COLUMN} PUBLIC grpc grpc++)
+
+#================== insert into table ==================
+set(CLIENT_TABLE client_table)
+add_executable(${CLIENT_TABLE} client_table.cpp)
+target_include_directories(${CLIENT_TABLE} PUBLIC ${CONTRIB_DIR})
+target_link_libraries(${CLIENT_TABLE} PUBLIC greptime_proto_cpp_lib)
+# target_link_libraries(${CLIENT_TABLE} PUBLIC ${PROTOBUF_LIBRARIES})
+target_link_libraries(${CLIENT_TABLE} PUBLIC ${GRPCPP_LIBRARIES})
+target_link_libraries(${CLIENT_TABLE} PUBLIC grpc grpc++)
