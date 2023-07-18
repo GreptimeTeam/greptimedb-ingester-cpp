@@ -16,33 +16,12 @@
 #ifndef GREPTIMEDB_CLIENT_CPP_DATABASE_H
 #define GREPTIMEDB_CLIENT_CPP_DATABASE_H
 
-#include <iostream>
-#include <memory>
-#include <greptime/v1/column.pb.h>
-#include <greptime/v1/common.pb.h>
-#include <greptime/v1/database.pb.h>
-#include <greptime/v1/database.grpc.pb.h>
-
 namespace greptime {
 
-using String = std::string;
-using v1::AuthHeader;
-
 class Database {
-public:
-    void hello() {
-        std::cout << "Hello Database" << std::endl;
-        auto InsertRequests  = new greptime::v1::InsertRequest();
-        // auto x = new v1::GreptimeResponse();
-
-    }
-    // Database(String dbname_, Client client_):dbname(dbname_), client(std::make_unique<Client>(std::move(client_))){};
-private:
-    String dbname;
-    // ClientPtr client;
-    // AuthHeader auth_header = {};
 
 };
+
 }
 
 
