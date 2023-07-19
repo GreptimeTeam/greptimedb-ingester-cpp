@@ -34,3 +34,4 @@ set(GREPTIMEDB_CLIENT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 # sub CMakeLists.txt
 add_subdirectory(contrib)
 add_subdirectory(src)
+add_subdirectory(examples)

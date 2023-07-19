@@ -13,28 +13,11 @@
 # limitations under the License.
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-project(greptimedb_client_lib)
 
-# file(GLOB_RECURSE OUTPUT_SOURCES "*.h" "*.cpp")
-set(OUTPUT_SOURCES
-    client.h
-    client.cpp
-    database.h
-    database.cpp
-)
+project(example_client_stream)
 
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
-include_directories(${PROTOBUF_INCLUDE_DIR})
-
-add_library(${PROJECT_NAME} ${OUTPUT_SOURCES})
-
-
-# include contrib c++
-set(CONTRIB_DIR ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/greptime-proto/c++)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CONTRIB_DIR})
-
-target_link_libraries(${PROJECT_NAME} PUBLIC greptime_proto_cpp_lib)
+set(CLIENT_STREAM example_client_stream)
+add_executable(${CLIENT_STREAM} client_stream.cpp)
 
 # protobuf
 find_package(Protobuf REQUIRED)
@@ -59,38 +42,15 @@ else()
     message(STATUS "Found gRPC++: ${GRPCPP_LINK_LIBRARIES} (found version \"${GRPCPP_VERSION}\")")
 endif()
 
-# message(STATUS "==================Found gRPC++: ${gRPC_VERSION}==================")
 
-# set(GRPCPP_LIBRARIES /usr/local/lib/libgrpc++.a /usr/local/lib/libgrpc.a)
-# target_link_libraries(${PROJECT_NAME} PUBLIC ${GRPCPP_LIBRARIES})
+set(CONTRIB_DIR ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/greptime-proto/c++)
 
-
-# target_include_directories(${PROEJCT_NAME} PUBLIC ${GRPC})
-
-
-#================== insert into column ==================
-# set(CLIENT_COLUMN client_column)
-# add_executable(${CLIENT_COLUMN} client_column.cpp)
-# target_include_directories(${CLIENT_COLUMN} PUBLIC ${CONTRIB_DIR})
-# target_link_libraries(${CLIENT_COLUMN} PUBLIC greptime_proto_cpp_lib)
-# # target_link_libraries(${CLIENT_COLUMN} PUBLIC ${PROTOBUF_LIBRARIES})
-# target_link_libraries(${CLIENT_COLUMN} PUBLIC ${GRPCPP_LIBRARIES})
-# target_link_libraries(${CLIENT_COLUMN} PUBLIC grpc grpc++)
-
-#================== insert into table ==================
-set(CLIENT_TABLE client_table)
-add_executable(${CLIENT_TABLE} client_table.cpp)
-target_include_directories(${CLIENT_TABLE} PUBLIC ${CONTRIB_DIR})
-target_link_libraries(${CLIENT_TABLE} PUBLIC greptime_proto_cpp_lib)
-# target_link_libraries(${CLIENT_TABLE} PUBLIC ${PROTOBUF_LIBRARIES})
-target_link_libraries(${CLIENT_TABLE} PUBLIC ${GRPCPP_LIBRARIES})
-target_link_libraries(${CLIENT_TABLE} PUBLIC grpc grpc++)
-
-#================== insert into stream ==================
-set(CLIENT_STREAM client_stream)
-add_executable(${CLIENT_STREAM} client_stream.cpp)
 target_include_directories(${CLIENT_STREAM} PUBLIC ${CONTRIB_DIR})
 target_link_libraries(${CLIENT_STREAM} PUBLIC greptime_proto_cpp_lib)
 # target_link_libraries(${CLIENT_STREAM} PUBLIC ${PROTOBUF_LIBRARIES})
 target_link_libraries(${CLIENT_STREAM} PUBLIC ${GRPCPP_LIBRARIES})
 target_link_libraries(${CLIENT_STREAM} PUBLIC grpc grpc++)
+
+set(SRC_DIR ${GREPTIMEDB_CLIENT_ROOT_DIR})
+target_include_directories(${CLIENT_STREAM} PUBLIC ${SRC_DIR})
+target_link_libraries(${CLIENT_STREAM} PUBLIC greptimedb_client_lib)

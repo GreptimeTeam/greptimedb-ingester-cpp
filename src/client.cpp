@@ -12,26 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "database.h"
-#include <greptime/v1/column.pb.h>
-#include <grpcpp/client_context.h>
+#include "client.h"
+#include "greptime/v1/database.pb.h"
 
 namespace greptime {
 
-Database::Database(String dbname_, std::shared_ptr<Channel> channel_)
-        : dbname(std::move(dbname_)),
-          client(channel_) {
-
-} 
-
-bool Database::Insert(InsertRequests insert_requests) {
-    RequestHeader request_header;
-    request_header.set_dbname(dbname);
-    GreptimeRequest greptime_request;
-    greptime_request.mutable_header()->CopyFrom(request_header);
-    greptime_request.mutable_inserts()->CopyFrom(insert_requests);
-
-    return client.Write(greptime_request);
-}
+GreptimeStreamClient::GreptimeStreamClient(std::shared_ptr<Channel> channel) 
+    : stub_(GreptimeDatabase::NewStub(channel)),
+      writer(stub_->HandleRequests(&context, &response)){
 
 };
+
+
+bool GreptimeStreamClient::Write(GreptimeRequest greptime_request) {
+    return writer->Write(greptime_request);
+}
+
+bool GreptimeStreamClient::WritesDone() {
+    return writer->WritesDone();
+}
+
+grpc::Status GreptimeStreamClient::Finish() {
+    return writer->Finish();
+}
+
+
+};
+
