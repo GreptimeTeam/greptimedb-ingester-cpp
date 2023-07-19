@@ -14,3 +14,20 @@
 
 #include "database.h"
 #include <greptime/v1/column.pb.h>
+#include <grpcpp/client_context.h>
+
+namespace greptime {
+
+Database::Database(String dbname_, std::shared_ptr<Channel> channel_) : dbname(std::move(dbname_)), client(channel_) {}
+
+bool Database::Insert(InsertRequests insert_requests) {
+    RequestHeader request_header;
+    request_header.set_dbname(dbname);
+    GreptimeRequest greptime_request;
+    greptime_request.mutable_header()->CopyFrom(request_header);
+    greptime_request.mutable_inserts()->CopyFrom(insert_requests);
+
+    return client.Write(greptime_request);
+}
+
+};  // namespace greptime

@@ -12,14 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <greptime/v1/column.pb.h>
-#include <src/database.h>
-#include <iostream>
-void test_hello() {
-    greptime::Database database;
-    database.hello();
+#include "client.h"
+#include "greptime/v1/database.pb.h"
+
+namespace greptime {
+
+GreptimeStreamClient::GreptimeStreamClient(std::shared_ptr<Channel> channel)
+    : stub_(GreptimeDatabase::NewStub(channel)),
+      writer(stub_->HandleRequests(&context, &response)){
+
+      };
+
+bool GreptimeStreamClient::Write(GreptimeRequest greptime_request) {
+    return writer->Write(greptime_request);
 }
-int main() {
-    test_hello();
-    return 0;
+
+bool GreptimeStreamClient::WritesDone() {
+    return writer->WritesDone();
 }
+
+grpc::Status GreptimeStreamClient::Finish() {
+    return writer->Finish();
+}
+
+};  // namespace greptime
