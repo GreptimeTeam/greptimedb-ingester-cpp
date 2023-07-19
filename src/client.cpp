@@ -38,4 +38,3 @@ grpc::Status GreptimeStreamClient::Finish() {
 
 
 };
-

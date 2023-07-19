@@ -38,8 +38,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC greptime_proto_cpp_lib)
 
 # protobuf
 find_package(Protobuf REQUIRED)
-message(STATUS "==================Found Protobuf: ${PROTOBUF_VERSION}==================")
-message(STATUS "==================Found Protobuf: Include Dir: ${PROTOBUF_INCLUDE_DIRS} Libraries: ${PROTOBUF_LIBRARIES}==================")
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROTOBUF_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROTOBUF_LIBRARIES})
@@ -58,39 +56,3 @@ else()
     set(GRPCPP_PLUGIN_EXEC ${GRPCPP_PREFIX}/bin/grpc_cpp_plugin)
     message(STATUS "Found gRPC++: ${GRPCPP_LINK_LIBRARIES} (found version \"${GRPCPP_VERSION}\")")
 endif()
-
-# message(STATUS "==================Found gRPC++: ${gRPC_VERSION}==================")
-
-# set(GRPCPP_LIBRARIES /usr/local/lib/libgrpc++.a /usr/local/lib/libgrpc.a)
-# target_link_libraries(${PROJECT_NAME} PUBLIC ${GRPCPP_LIBRARIES})
-
-
-# target_include_directories(${PROEJCT_NAME} PUBLIC ${GRPC})
-
-
-#================== insert into column ==================
-# set(CLIENT_COLUMN client_column)
-# add_executable(${CLIENT_COLUMN} client_column.cpp)
-# target_include_directories(${CLIENT_COLUMN} PUBLIC ${CONTRIB_DIR})
-# target_link_libraries(${CLIENT_COLUMN} PUBLIC greptime_proto_cpp_lib)
-# # target_link_libraries(${CLIENT_COLUMN} PUBLIC ${PROTOBUF_LIBRARIES})
-# target_link_libraries(${CLIENT_COLUMN} PUBLIC ${GRPCPP_LIBRARIES})
-# target_link_libraries(${CLIENT_COLUMN} PUBLIC grpc grpc++)
-
-#================== insert into table ==================
-set(CLIENT_TABLE client_table)
-add_executable(${CLIENT_TABLE} client_table.cpp)
-target_include_directories(${CLIENT_TABLE} PUBLIC ${CONTRIB_DIR})
-target_link_libraries(${CLIENT_TABLE} PUBLIC greptime_proto_cpp_lib)
-# target_link_libraries(${CLIENT_TABLE} PUBLIC ${PROTOBUF_LIBRARIES})
-target_link_libraries(${CLIENT_TABLE} PUBLIC ${GRPCPP_LIBRARIES})
-target_link_libraries(${CLIENT_TABLE} PUBLIC grpc grpc++)
-
-#================== insert into stream ==================
-set(CLIENT_STREAM client_stream)
-add_executable(${CLIENT_STREAM} client_stream.cpp)
-target_include_directories(${CLIENT_STREAM} PUBLIC ${CONTRIB_DIR})
-target_link_libraries(${CLIENT_STREAM} PUBLIC greptime_proto_cpp_lib)
-# target_link_libraries(${CLIENT_STREAM} PUBLIC ${PROTOBUF_LIBRARIES})
-target_link_libraries(${CLIENT_STREAM} PUBLIC ${GRPCPP_LIBRARIES})
-target_link_libraries(${CLIENT_STREAM} PUBLIC grpc grpc++)
