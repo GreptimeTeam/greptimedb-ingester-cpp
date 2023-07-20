@@ -49,7 +49,7 @@ target_include_directories(${CLIENT_STREAM} PUBLIC ${CONTRIB_DIR})
 target_link_libraries(${CLIENT_STREAM} PUBLIC greptime_proto_cpp_lib)
 # target_link_libraries(${CLIENT_STREAM} PUBLIC ${PROTOBUF_LIBRARIES})
 target_link_libraries(${CLIENT_STREAM} PUBLIC ${GRPCPP_LIBRARIES})
-target_link_libraries(${CLIENT_STREAM} PUBLIC grpc grpc++)
+target_link_libraries(${CLIENT_STREAM} PUBLIC gRPC::grpc gRPC::grpc++)
 
 set(SRC_DIR ${GREPTIMEDB_CLIENT_ROOT_DIR})
 target_include_directories(${CLIENT_STREAM} PUBLIC ${SRC_DIR})
