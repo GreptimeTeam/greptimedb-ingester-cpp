@@ -26,6 +26,7 @@ set(GREPTIMEDB_CLIENT_THIRD_PARTY_INCLUDE_DIR
         ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/greptime-proto/c++
         ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/include
         ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/abseil-cpp
+        ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/protobuf/src
         )
 
 include_directories(
