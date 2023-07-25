@@ -11,6 +11,24 @@
 ## Build
 
 ```bash
-git submodule update --init --recursive 
-cmake --build .
+git clone --recurse-submodules --depth 1 --shallow-submodules https://github.com/GreptimeTeam/greptimedb-client-cpp
+
+cd greptimedb-client-cpp
+
+# create a new build directory where the project is compiled
+mkdir build && cd build
+
+cmake ..
+
+make -j$(nproc)
+```
+
+## Run
+
+```bash
+# the test program is in the greptimedb-client-cpp/build/examples directory
+cd greptimedb-client-cpp/build/examples
+
+# run the executable file you want to execute
+./example_client_stream
 ```

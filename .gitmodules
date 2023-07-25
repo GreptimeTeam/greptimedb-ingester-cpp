@@ -1,3 +1,7 @@
 [submodule "contrib/greptime-proto"]
 	path = contrib/greptime-proto
 	url = https://github.com/GreptimeTeam/greptime-proto.git
+[submodule "contrib/grpc"]
+	path = contrib/grpc
+	url = https://github.com/grpc/grpc
+	branch = v1.51.x

@@ -12,6 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-include_directories(greptime-proto/c++)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/greptime-proto/c++)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/grpc)
