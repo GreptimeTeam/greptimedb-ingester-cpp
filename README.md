@@ -11,12 +11,9 @@
 ## Build
 
 ```bash
-git clone git@github.com:GreptimeTeam/greptimedb-client-cpp.git
+git clone --recurse-submodules --depth 1 --shallow-submodules https://github.com/GreptimeTeam/greptimedb-client-cpp
 
 cd greptimedb-client-cpp
-
-# update submodule 
-git submodule update --init --recursive
 
 # create a new build directory where the project is compiled
 mkdir build && cd build
