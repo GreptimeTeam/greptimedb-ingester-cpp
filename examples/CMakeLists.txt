@@ -18,18 +18,5 @@ add_executable(${CLIENT_STREAM} client_stream.cpp)
 # greptime lib
 target_link_libraries(${CLIENT_STREAM} 
         PUBLIC 
-        greptime_proto_cpp_lib
         greptimedb_client_lib
-        )
-
-# third party lib
-target_link_libraries(${CLIENT_STREAM} 
-        PUBLIC 
-        grpc grpc++
-        )
-
-# include<src/xxxx.h>
-target_include_directories(${CLIENT_STREAM} 
-        PUBLIC 
-        ${GREPTIMEDB_CLIENT_ROOT_DIR}
         )
