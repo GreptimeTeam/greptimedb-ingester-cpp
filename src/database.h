@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #include <iostream>
-#include "greptime/v1/database.pb.h"
 #include "client.h"
+#include "greptime/v1/database.pb.h"
 
 #ifndef GREPTIMEDB_CLIENT_CPP_DATABASE_H
 #define GREPTIMEDB_CLIENT_CPP_DATABASE_H
@@ -24,33 +24,24 @@ namespace greptime {
 using String = std::string;
 using greptime::v1::InsertRequests;
 
-
 class Database {
-public:
+   public:
     Database(String dbname_, std::shared_ptr<Channel> channel);
     bool Insert(InsertRequests &insert_requests);
 
-    bool InsertsDone() {
-        return client.WritesDone();
-    }
+    bool InsertsDone() { return client.WritesDone(); }
 
-    grpc::Status Finish() {
-        return client.Finish();
-    }
+    grpc::Status Finish() { return client.Finish(); }
 
-    GreptimeResponse GetResponse() {
-        return client.GetResponse();
-    }
+    GreptimeResponse GetResponse() { return client.GetResponse(); }
 
-private:
+   private:
     String dbname;
     GreptimeStreamClient client;
     // avoid repetitive construction and destruction
     GreptimeRequest greptime_request;
-
 };
 
-}
+}  // namespace greptime
 
-
-#endif //GREPTIMEDB_CLIENT_CPP_DATABASE_H
+#endif  // GREPTIMEDB_CLIENT_CPP_DATABASE_H

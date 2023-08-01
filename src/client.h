@@ -21,16 +21,14 @@
 
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/stubs/common.h>
-#include <grpcpp/grpcpp.h>
 #include <greptime/v1/column.pb.h>
 #include <greptime/v1/common.pb.h>
-#include <greptime/v1/database.pb.h>
 #include <greptime/v1/database.grpc.pb.h>
+#include <greptime/v1/database.pb.h>
 #include <grpc/grpc.h>
 #include <grpcpp/grpcpp.h>
 
 #include <grpcpp/client_context.h>
-#include <grpcpp/support/async_stream.h>
 #include <grpcpp/impl/channel_interface.h>
 #include <grpcpp/support/async_stream.h>
 
@@ -39,23 +37,22 @@
 
 namespace greptime {
 
-using grpc::Channel;
-using grpc::ClientContext;
-using grpc::Status;
 using greptime::v1::Column;
+using greptime::v1::Column_SemanticType;
+using greptime::v1::ColumnDataType;
 using greptime::v1::GreptimeDatabase;
 using greptime::v1::GreptimeRequest;
 using greptime::v1::GreptimeResponse;
 using greptime::v1::InsertRequest;
 using greptime::v1::InsertRequests;
-using greptime::v1::Column_SemanticType;
-using greptime::v1::ColumnDataType;
 using greptime::v1::RequestHeader;
+using grpc::Channel;
+using grpc::ClientContext;
+using grpc::Status;
 using String = std::string;
 
-
 class GreptimeStreamClient {
-public:
+   public:
     GreptimeStreamClient(std::shared_ptr<Channel> channel);
 
     bool Write(const GreptimeRequest &greptime_request);
@@ -64,16 +61,13 @@ public:
 
     grpc::Status Finish();
 
-    GreptimeResponse GetResponse() {
-        return response;
-    }
+    GreptimeResponse GetResponse() { return response; }
 
-
-private:
+   private:
     std::unique_ptr<GreptimeDatabase::Stub> stub_;
     GreptimeResponse response;
     ClientContext context;
     std::unique_ptr<grpc::ClientWriter<GreptimeRequest>> writer;
 };
 
-};
+};  // namespace greptime

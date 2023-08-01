@@ -17,12 +17,11 @@
 
 namespace greptime {
 
-GreptimeStreamClient::GreptimeStreamClient(std::shared_ptr<Channel> channel) 
+GreptimeStreamClient::GreptimeStreamClient(std::shared_ptr<Channel> channel)
     : stub_(GreptimeDatabase::NewStub(channel)),
       writer(stub_->HandleRequests(&context, &response)){
 
-};
-
+      };
 
 bool GreptimeStreamClient::Write(const GreptimeRequest &greptime_request) {
     return writer->Write(greptime_request);
@@ -36,5 +35,4 @@ grpc::Status GreptimeStreamClient::Finish() {
     return writer->Finish();
 }
 
-
-};
+};  // namespace greptime

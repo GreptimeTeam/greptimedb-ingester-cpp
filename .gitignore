@@ -53,3 +53,5 @@ _deps
 cmake-build-debug
 
 .cache
+
+.vscode
