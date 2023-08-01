@@ -38,8 +38,6 @@ class Database {
    private:
     String dbname;
     GreptimeStreamClient client;
-    // avoid repetitive construction and destruction
-    GreptimeRequest greptime_request;
 };
 
 }  // namespace greptime
