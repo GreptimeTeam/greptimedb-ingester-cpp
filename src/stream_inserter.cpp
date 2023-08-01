@@ -12,15 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "database.h"
+#include "stream_inserter.h"
 
 namespace greptime {
+    
+using greptime::v1::RequestHeader;
 
-Database::Database(String dbname_, String greptimedb_endpoint_) : dbname(std::move(dbname_)), client(greptimedb_endpoint_) {}
-
-StreamInserter Database::CreateStreamInserter() {
-    return StreamInserter(dbname, client.stub);
+bool StreamInserter::Write(InsertRequests &insert_requests) {
+    RequestHeader request_header;
+    request_header.set_dbname(dbname);
+    // avoid repetitive construction and destruction
+    thread_local GreptimeRequest greptime_request;
+    greptime_request.mutable_header()->Swap(&request_header);
+    greptime_request.mutable_inserts()->Swap(&insert_requests);
+    
+    return writer->Write(greptime_request);
 }
 
-
-};  // namespace greptime
+};

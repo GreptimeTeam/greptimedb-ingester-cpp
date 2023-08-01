@@ -136,8 +136,10 @@ auto to_insert_requests(const std::vector<InsertRequest>& vec_insert_requests) -
 int main(int argc, char** argv) {
     /** =========================== 1.Create a Database object and connect to the gRPC service
      * =========================== **/
-    auto channel = grpc::CreateChannel("localhost:4001", grpc::InsecureChannelCredentials());
-    greptime::Database database("public", channel);
+    
+    greptime::Database database("public", "localhost:4001");
+
+    auto stream_inserter = database.CreateStreamInserter();
 
     /** =========================== 2.generate insert requests =========================== **/
     auto insert_request_1 = to_insert_request(weather_records_1());
@@ -149,20 +151,19 @@ int main(int argc, char** argv) {
     auto table_name = insert_request_1.table_name();
 
     /** =========================== 3.continue insert requests =========================== **/
-    database.Insert(insert_requests_1);
-    database.Insert(insert_requests_2);
-    database.InsertsDone();
-    Status status = database.Finish();
+    stream_inserter.Write(insert_requests_1);
+    stream_inserter.Write(insert_requests_2);
+    stream_inserter.WriteDone();
+    Status status = stream_inserter.Finish();
 
     /** =========================== 4.handle return response =========================== **/
     if (status.ok()) {
         std::cout << "success!" << std::endl;
-        auto response = database.GetResponse();
+        auto response = stream_inserter.GetResponse();
 
         std::cout << "notice: [";
         std::cout << response.affected_rows().value() << "] ";
-        std::cout << "rows of data are successfully inserted into the public database table " << table_name
-                  << std::endl;
+        std::cout << "rows of data are successfully inserted into the public database table " << table_name << std::endl;
     } else {
         std::cout << "fail!" << std::endl;
         std::cout << status.error_message() << std::endl;

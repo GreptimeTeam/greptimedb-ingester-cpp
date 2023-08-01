@@ -13,26 +13,15 @@
 // limitations under the License.
 
 #include "client.h"
-#include "greptime/v1/database.pb.h"
-
+#include <grpc/grpc.h>
+#include <grpcpp/grpcpp.h>
+#include <grpcpp/client_context.h>
 namespace greptime {
 
-GreptimeStreamClient::GreptimeStreamClient(std::shared_ptr<Channel> channel)
-    : stub_(GreptimeDatabase::NewStub(channel)),
-      writer(stub_->HandleRequests(&context, &response)){
+GreptimeClient::GreptimeClient(String greptimedb_endpoint_)
+    : channel(grpc::CreateChannel(greptimedb_endpoint_, grpc::InsecureChannelCredentials())), 
+      stub(GreptimeDatabase::NewStub(channel)) {
 
-      };
-
-bool GreptimeStreamClient::Write(const GreptimeRequest &greptime_request) {
-    return writer->Write(greptime_request);
 }
-
-bool GreptimeStreamClient::WritesDone() {
-    return writer->WritesDone();
-}
-
-grpc::Status GreptimeStreamClient::Finish() {
-    return writer->Finish();
-}
-
+      
 };  // namespace greptime
