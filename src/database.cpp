@@ -18,11 +18,7 @@
 
 namespace greptime {
 
-Database::Database(String dbname_, std::shared_ptr<Channel> channel_)
-        : dbname(std::move(dbname_)),
-          client(channel_) {
-
-} 
+Database::Database(String dbname_, std::shared_ptr<Channel> channel_) : dbname(std::move(dbname_)), client(channel_) {}
 
 bool Database::Insert(InsertRequests &insert_requests) {
     RequestHeader request_header;
@@ -34,4 +30,4 @@ bool Database::Insert(InsertRequests &insert_requests) {
     return client.Write(greptime_request);
 }
 
-};
+};  // namespace greptime
