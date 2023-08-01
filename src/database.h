@@ -27,7 +27,7 @@ using greptime::v1::InsertRequests;
 class Database {
    public:
     Database(String dbname_, std::shared_ptr<Channel> channel);
-    bool Insert(InsertRequests insert_requests);
+    bool Insert(InsertRequests &insert_requests);
 
     bool InsertsDone() { return client.WritesDone(); }
 

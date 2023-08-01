@@ -79,7 +79,7 @@ auto to_insert_request(std::vector<WeatherRecord> records) -> InsertRequest {
         for (const auto& record : records) {
             values->add_ts_millisecond_values(record.timestamp_millis);
         }
-        insert_request.add_columns()->CopyFrom(column);
+        insert_request.add_columns()->Swap(&column);
     }
 
     {
@@ -92,8 +92,9 @@ auto to_insert_request(std::vector<WeatherRecord> records) -> InsertRequest {
         for (const auto& record : records) {
             values->add_string_values(record.collector);
         }
-        insert_request.add_columns()->CopyFrom(column);
-    }
+        insert_request.add_columns()->Swap(&column);
+    } 
+
 
     {
         Column column;
@@ -105,7 +106,7 @@ auto to_insert_request(std::vector<WeatherRecord> records) -> InsertRequest {
         for (const auto& record : records) {
             values->add_f32_values(record.temperature);
         }
-        insert_request.add_columns()->CopyFrom(column);
+        insert_request.add_columns()->Swap(&column);
     }
 
     {
@@ -118,7 +119,7 @@ auto to_insert_request(std::vector<WeatherRecord> records) -> InsertRequest {
         for (const auto& record : records) {
             values->add_i32_values(record.humidity);
         }
-        insert_request.add_columns()->CopyFrom(column);
+        insert_request.add_columns()->Swap(&column);
     }
 
     return insert_request;
