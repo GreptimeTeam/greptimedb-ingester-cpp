@@ -27,7 +27,6 @@ Database::Database(String dbname_, std::shared_ptr<Channel> channel_)
 bool Database::Insert(InsertRequests &insert_requests) {
     RequestHeader request_header;
     request_header.set_dbname(dbname);
-    GreptimeRequest greptime_request;
     greptime_request.mutable_header()->Swap(&request_header);
     greptime_request.mutable_inserts()->Swap(&insert_requests);
     

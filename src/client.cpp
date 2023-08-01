@@ -24,7 +24,7 @@ GreptimeStreamClient::GreptimeStreamClient(std::shared_ptr<Channel> channel)
 };
 
 
-bool GreptimeStreamClient::Write(GreptimeRequest greptime_request) {
+bool GreptimeStreamClient::Write(const GreptimeRequest &greptime_request) {
     return writer->Write(greptime_request);
 }
 

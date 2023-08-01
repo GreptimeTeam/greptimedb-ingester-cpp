@@ -58,7 +58,7 @@ class GreptimeStreamClient {
 public:
     GreptimeStreamClient(std::shared_ptr<Channel> channel);
 
-    bool Write(GreptimeRequest greptime_request);
+    bool Write(const GreptimeRequest &greptime_request);
     
     bool WritesDone();
 
