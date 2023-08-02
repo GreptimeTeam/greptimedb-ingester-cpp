@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include "client.h"
-#include "greptime/v1/database.pb.h"
+#include "stream_inserter.h"
 
 #ifndef GREPTIMEDB_CLIENT_CPP_DATABASE_H
 #define GREPTIMEDB_CLIENT_CPP_DATABASE_H
@@ -25,19 +25,14 @@ using String = std::string;
 using greptime::v1::InsertRequests;
 
 class Database {
-   public:
-    Database(String dbname_, std::shared_ptr<Channel> channel);
-    bool Insert(InsertRequests &insert_requests);
+public:
+    Database(String dbname_, String greptimedb_endpoint_);
+    
+    StreamInserter CreateStreamInserter(); 
 
-    bool InsertsDone() { return client.WritesDone(); }
-
-    grpc::Status Finish() { return client.Finish(); }
-
-    GreptimeResponse GetResponse() { return client.GetResponse(); }
-
-   private:
+private:
     String dbname;
-    GreptimeStreamClient client;
+    GreptimeClient client;
 };
 
 }  // namespace greptime

@@ -18,6 +18,7 @@ project(greptimedb_client_lib)
 set(OUTPUT_SOURCES
         client.cpp
         database.cpp
+        stream_inserter.cpp
         )
 
 add_library(${PROJECT_NAME} ${OUTPUT_SOURCES})
