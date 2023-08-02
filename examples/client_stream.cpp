@@ -19,7 +19,7 @@
 #include <string>
 #include <valarray>
 #include <vector>
-
+#include <cmath>
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/stubs/common.h>
 #include <greptime/v1/column.pb.h>
@@ -37,126 +37,42 @@
 #include <grpcpp/support/status.h>
 #include <src/database.h>
 
-using greptime::v1::Column;
-using greptime::v1::Column_SemanticType;
-using greptime::v1::ColumnDataType;
-using greptime::v1::InsertRequest;
-using greptime::v1::InsertRequests;
-using grpc::Channel;
 using grpc::Status;
 
 struct WeatherRecord {
     uint64_t timestamp_millis;
-    std::string collector;
-    float temperature;
-    int32_t humidity;
+    float_t temperature;
+    float_t humidity;
 };
 
 auto weather_records_1() -> std::vector<WeatherRecord> {
-    return std::vector<WeatherRecord>{{1686109527000, "c1", 26.4, 15}, {1686023127001, "c1", 29.3, 20},
-                                      {1685936727002, "c1", 31.8, 13}, {1686109527000, "c2", 20.4, 67},
-                                      {1686109527001, "c2", 18.4, 74}, {1685936727002, "c2", 19.2, 81}};
-}
-
-auto weather_records_2() -> std::vector<WeatherRecord> {
-    return std::vector<WeatherRecord>{{1686109527003, "c1", 26.4, 15}, {1686023127004, "c1", 29.3, 20},
-                                      {1685936727005, "c1", 31.8, 13}, {1686109527003, "c2", 20.4, 67},
-                                      {1686109527004, "c2", 18.4, 74}, {1685936727005, "c2", 19.2, 81}};
-}
-
-auto to_insert_request(std::vector<WeatherRecord> records) -> InsertRequest {
-    InsertRequest insert_request;
-    uint32_t rows = records.size();
-    insert_request.set_table_name("weather_demo");
-    insert_request.set_row_count(rows);
-    {
-        Column column;
-        column.set_column_name("ts");
-        column.set_semantic_type(Column_SemanticType::Column_SemanticType_TIMESTAMP);
-        column.set_datatype(ColumnDataType::TIMESTAMP_MILLISECOND);
-
-        auto values = column.mutable_values();
-        for (const auto& record : records) {
-            values->add_ts_millisecond_values(record.timestamp_millis);
-        }
-        insert_request.add_columns()->Swap(&column);
-    }
-
-    {
-        Column column;
-        column.set_column_name("collector");
-        column.set_semantic_type(Column_SemanticType::Column_SemanticType_TAG);
-        column.set_datatype(ColumnDataType::STRING);
-
-        auto values = column.mutable_values();
-        for (const auto& record : records) {
-            values->add_string_values(record.collector);
-        }
-        insert_request.add_columns()->Swap(&column);
-    } 
-
-
-    {
-        Column column;
-        column.set_column_name("temperature");
-        column.set_semantic_type(Column_SemanticType::Column_SemanticType_FIELD);
-        column.set_datatype(ColumnDataType::FLOAT32);
-
-        auto values = column.mutable_values();
-        for (const auto& record : records) {
-            values->add_f32_values(record.temperature);
-        }
-        insert_request.add_columns()->Swap(&column);
-    }
-
-    {
-        Column column;
-        column.set_column_name("humidity");
-        column.set_semantic_type(Column_SemanticType::Column_SemanticType_FIELD);
-        column.set_datatype(ColumnDataType::INT32);
-
-        auto values = column.mutable_values();
-        for (const auto& record : records) {
-            values->add_i32_values(record.humidity);
-        }
-        insert_request.add_columns()->Swap(&column);
-    }
-
-    return insert_request;
-}
-
-auto to_insert_requests(const std::vector<InsertRequest>& vec_insert_requests) -> InsertRequests {
-    InsertRequests insert_requests;
-    for (auto insert_request : vec_insert_requests) {
-        insert_requests.add_inserts()->CopyFrom(insert_request);
-    }
-    return insert_requests;
+    return std::vector<WeatherRecord>{{1686109527000, 26.4, 15.0}, {1686023127001, 29.3, 20.0},
+                                      {1685936727002, 31.8, 13.0}, {1686109527003, 20.4, 67.0},
+                                      {1686109527004, 18.4, 74.0}, {1685936727005, 19.2, 81.0}};
 }
 
 int main(int argc, char** argv) {
-    /** =========================== 1.Create a Database object and connect to the gRPC service
-     * =========================== **/
     
     greptime::Database database("public", "localhost:4001");
 
-    auto stream_inserter = database.CreateStreamInserter();
+    auto stream_inserter = database.CreateStreamInserter<float_t>();
 
-    /** =========================== 2.generate insert requests =========================== **/
-    auto insert_request_1 = to_insert_request(weather_records_1());
-    auto insert_requests_1 = to_insert_requests({insert_request_1});
+    std::string table_name("weather_demo1"); 
 
-    auto insert_request_2 = to_insert_request(weather_records_2());
-    auto insert_requests_2 = to_insert_requests({insert_request_2});
 
-    auto table_name = insert_request_1.table_name();
+    auto weather_demo = weather_records_1();
 
-    /** =========================== 3.continue insert requests =========================== **/
-    stream_inserter.Write(insert_requests_1);
-    stream_inserter.Write(insert_requests_2);
+    for (auto &[ts, v1, v2] : weather_demo) {
+        greptime::InsertEntry<float_t> insert_entry(ts);
+
+        insert_entry.add_point(table_name, "temperature", v1);
+        insert_entry.add_point(table_name, "humidity", v2);
+        stream_inserter.Write(insert_entry);
+    }
+
     stream_inserter.WriteDone();
     Status status = stream_inserter.Finish();
 
-    /** =========================== 4.handle return response =========================== **/
     if (status.ok()) {
         std::cout << "success!" << std::endl;
         auto response = stream_inserter.GetResponse();

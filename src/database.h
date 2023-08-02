@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cmath>
 #include <iostream>
 #include "client.h"
 #include "stream_inserter.h"
@@ -23,18 +24,22 @@ namespace greptime {
 
 using String = std::string;
 using greptime::v1::InsertRequests;
-
+template<typename FieldVal>
+class StreamInserter;
 class Database {
 public:
     Database(String dbname_, String greptimedb_endpoint_);
     
-    StreamInserter CreateStreamInserter(); 
+    template <typename FieldVal> 
+    StreamInserter<FieldVal> CreateStreamInserter() {
+        return StreamInserter<FieldVal>(dbname, client.channel, client.stub);
+    }
 
 private:
     String dbname;
     GreptimeClient client;
 };
 
-}  // namespace greptime
+}; // namespace greptime
 
 #endif  // GREPTIMEDB_CLIENT_CPP_DATABASE_H

@@ -14,33 +14,17 @@
 
 #include "stream_inserter.h"
 #include <memory>
-#include "grpcpp/client_context.h"
+#include <grpcpp/client_context.h>
 
 namespace greptime {
     
-using greptime::v1::RequestHeader;
-
-bool StreamInserter::Write(InsertRequests &insert_requests) {
-    RequestHeader request_header;
-    request_header.set_dbname(dbname);
-    // avoid repetitive construction and destruction
-    thread_local GreptimeRequest greptime_request;
-    greptime_request.mutable_header()->Swap(&request_header);
-    greptime_request.mutable_inserts()->Swap(&insert_requests);
-
-    while(true) {
-        if (writer->Write(greptime_request)) {
-            return true; // Write successful
-        } else {
-            if (channel->GetState(true) == GRPC_CHANNEL_TRANSIENT_FAILURE) {
-                context = std::make_shared<grpc::ClientContext>();
-                context->set_wait_for_ready(true);
-                writer = stub->HandleRequests(context.get(), &response);
-            } else {
-                return false; // Write failed
-            }
-        }
+auto to_insert_requests(std::vector<InsertRequest>& vec_insert_requests) -> InsertRequests {
+    InsertRequests insert_requests;
+    for (auto &insert_request : vec_insert_requests) {
+        insert_requests.add_inserts()->Swap(&insert_request);
     }
+    return std::move(insert_requests);
 }
+
 
 };
