@@ -19,9 +19,6 @@ set(OUTPUT_SOURCES
         client.cpp
         database.cpp
         stream_inserter.cpp
-        client.h
-        database.h
-        stream_inserter.h
         )
 
 add_library(${PROJECT_NAME} ${OUTPUT_SOURCES})

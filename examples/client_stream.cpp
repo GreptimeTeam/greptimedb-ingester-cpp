@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
     
     greptime::Database database("public", "localhost:4001");
 
-    auto stream_inserter = database.CreateStreamInserter<float_t>();
+    auto stream_inserter = database.CreateStreamInserter(100);
 
     std::string table_name("weather_demo1"); 
 
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
     auto weather_demo = weather_records_1();
 
     for (auto &[ts, v1, v2] : weather_demo) {
-        greptime::InsertEntry<float_t> insert_entry(ts);
+        greptime::InsertEntry insert_entry(ts);
 
         insert_entry.add_point(table_name, "temperature", v1);
         insert_entry.add_point(table_name, "humidity", v2);

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <cmath>
+#include <cstdint>
 #include <iostream>
 #include "client.h"
 #include "stream_inserter.h"
@@ -24,20 +25,17 @@ namespace greptime {
 
 using String = std::string;
 using greptime::v1::InsertRequests;
-template<typename FieldVal>
-class StreamInserter;
+
 class Database {
 public:
     Database(String dbname_, String greptimedb_endpoint_);
     
-    template <typename FieldVal> 
-    StreamInserter<FieldVal> CreateStreamInserter() {
-        return StreamInserter<FieldVal>(dbname, client.channel, client.stub);
-    }
+    StreamInserter CreateStreamInserter(uint32_t batch_num);
 
 private:
     String dbname;
     GreptimeClient client;
+    
 };
 
 }; // namespace greptime
