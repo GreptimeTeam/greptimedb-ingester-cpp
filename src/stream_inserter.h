@@ -64,6 +64,12 @@ struct InsertEntry {
         tables[table_name].emplace(field_name, field_val);
     }
 
+    void set_ts(Timestamp ts_) {
+        ts = ts_;
+    }
+
+    uint32_t get_point_num();
+
 };
 
 /// 攒批

@@ -26,6 +26,13 @@ auto to_insert_requests(std::vector<InsertRequest>& vec_insert_requests) -> Inse
     return std::move(insert_requests);
 }
 
+uint32_t InsertEntry::get_point_num() {
+    uint32_t ret = 0;
+    for (const auto & table : tables) 
+        ret += table.second.size();
+    return ret;
+}
+
 void LineWriter::add_row(TableName table_name, Timestamp ts, const std::unordered_map<FieldName, FieldVal> &fields) {
     if (mp.find(table_name) == mp.end()) {
         mp.emplace(table_name, std::make_tuple(std::unordered_map<FieldName, std::vector<FieldVal>>(),
@@ -104,6 +111,7 @@ bool StreamInserter::Write(InsertEntry &insert_entry) {
             }
         }
         cache.clear();
+
         auto insert_vec = line_writer.to_insert_request_vec();
         auto insert_requests = to_insert_requests(insert_vec);
         return WriteInner(insert_requests);
