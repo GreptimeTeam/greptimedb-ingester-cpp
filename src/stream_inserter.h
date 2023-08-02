@@ -13,7 +13,9 @@
 // limitations under the License.
 
 #include <greptime/v1/database.grpc.pb.h>
-
+#include <grpcpp/channel.h>
+#include <memory>
+#include "grpcpp/client_context.h"
 namespace greptime {
 
 using String = std::string;
@@ -24,12 +26,17 @@ using greptime::v1::InsertRequest;
 using greptime::v1::InsertRequests;
 using grpc::ClientContext;
 using grpc::Status;
+using grpc::Channel;
 
 class StreamInserter {
 public:
-    StreamInserter(String dbname_, std::shared_ptr<GreptimeDatabase::Stub> stub_) : dbname(dbname_) {
-        writer = std::move(stub_->HandleRequests(&context, &response));
+    StreamInserter(String dbname_, std::shared_ptr<Channel> channel_, std::shared_ptr<GreptimeDatabase::Stub> stub_) :
+    dbname(dbname_), channel(channel_), stub(stub_) {
+        context = std::make_shared<ClientContext>();
+        context->set_wait_for_ready(true);
+        writer = std::move(stub_->HandleRequests(context.get(), &response));
     }
+
     bool Write(InsertRequests &insert_requests);
 
     bool WriteDone() { return writer->WritesDone();}
@@ -41,8 +48,10 @@ public:
 private:
     String dbname;
     GreptimeResponse response;
-    ClientContext context;
+    std::shared_ptr<ClientContext> context;
+    std::shared_ptr<Channel> channel;
+    std::shared_ptr<GreptimeDatabase::Stub> stub;
     std::unique_ptr<grpc::ClientWriter<GreptimeRequest>> writer;
 };
 
-}  // namespace greptime
+};  // namespace greptime

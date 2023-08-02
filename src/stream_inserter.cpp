@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include "stream_inserter.h"
+#include <memory>
+#include "grpcpp/client_context.h"
 
 namespace greptime {
     
@@ -25,8 +27,20 @@ bool StreamInserter::Write(InsertRequests &insert_requests) {
     thread_local GreptimeRequest greptime_request;
     greptime_request.mutable_header()->Swap(&request_header);
     greptime_request.mutable_inserts()->Swap(&insert_requests);
-    
-    return writer->Write(greptime_request);
+
+    while(true) {
+        if (writer->Write(greptime_request)) {
+            return true; // Write successful
+        } else {
+            if (channel->GetState(true) == GRPC_CHANNEL_TRANSIENT_FAILURE) {
+                context = std::make_shared<grpc::ClientContext>();
+                context->set_wait_for_ready(true);
+                writer = stub->HandleRequests(context.get(), &response);
+            } else {
+                return false; // Write failed
+            }
+        }
+    }
 }
 
 };

@@ -19,7 +19,7 @@ namespace greptime {
 Database::Database(String dbname_, String greptimedb_endpoint_) : dbname(std::move(dbname_)), client(greptimedb_endpoint_) {}
 
 StreamInserter Database::CreateStreamInserter() {
-    return StreamInserter(dbname, client.stub);
+    return StreamInserter(dbname,client.channel, client.stub);
 }
 
 
