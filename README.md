@@ -1,13 +1,5 @@
 # greptimedb-client-cpp
 
-## Dependencies
-
-- `libprotobuf-lite32_3.21`
-- `libprotobuf32_3.21`
-- `libprotoc32_3.21`
-- `protobuf-compiler_3.21`
-- `libprotobuf-dev_3.21`
-
 ## Build
 
 ```bash
@@ -23,12 +15,12 @@ cmake ..
 make -j$(nproc)
 ```
 
-## Run
+## Run examples
 
 ```bash
 # the test program is in the greptimedb-client-cpp/build/examples directory
 cd greptimedb-client-cpp/build/examples
 
-# run the executable file you want to execute
+# run the example binary
 ./example_client_stream
 ```
