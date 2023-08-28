@@ -14,8 +14,17 @@
 
 #include <greptime/v1/database.grpc.pb.h>
 #include <grpcpp/channel.h>
+#include <atomic>
+#include <cassert>
+#include <cstddef>
+#include <iostream>
 #include <memory>
+#include "greptime/v1/database.pb.h"
 #include "grpcpp/client_context.h"
+#include <thread>
+#include <queue>
+#include <condition_variable>
+#include <mutex>
 namespace greptime {
 
 using String = std::string;
@@ -31,15 +40,30 @@ using grpc::Channel;
 class StreamInserter {
 public:
     StreamInserter(String dbname_, std::shared_ptr<Channel> channel_, std::shared_ptr<GreptimeDatabase::Stub> stub_) :
-    dbname(dbname_), channel(channel_), stub(stub_) {
+    dbname(dbname_), channel(channel_), stub(stub_){
         context = std::make_shared<ClientContext>();
         context->set_wait_for_ready(true);
         writer = std::move(stub_->HandleRequests(context.get(), &response));
+        scheduler_thread_is_running = true;
+        scheduler_thread = new std::thread(&StreamInserter::RunHandleRequest, this);
     }
 
-    bool Write(InsertRequests &insert_requests);
+    ~StreamInserter() {
+        delete scheduler_thread;
+    }
 
-    bool WriteDone() { return writer->WritesDone();}
+    void Write(std::vector<InsertRequest> insert_request_vec);
+
+    bool Send(GreptimeRequest &greptime_request);
+
+    void RunHandleRequest();
+
+    bool WriteDone() {
+        scheduler_thread_is_running = false;
+        cv.notify_one();
+        scheduler_thread->join();
+        return writer->WritesDone();
+    }
 
     grpc::Status Finish() { return writer->Finish(); }
 
@@ -52,6 +76,13 @@ private:
     std::shared_ptr<Channel> channel;
     std::shared_ptr<GreptimeDatabase::Stub> stub;
     std::unique_ptr<grpc::ClientWriter<GreptimeRequest>> writer;
+    
+    ///background thread handle insert request
+    std::thread *scheduler_thread;
+    std::queue<InsertRequest> buffer; 
+    std::mutex mtx;
+    std::condition_variable cv;
+    bool scheduler_thread_is_running;
 };
 
 };  // namespace greptime

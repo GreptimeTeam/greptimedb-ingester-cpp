@@ -134,8 +134,7 @@ auto to_insert_requests(const std::vector<InsertRequest>& vec_insert_requests) -
 }
 
 int main(int argc, char** argv) {
-    /** =========================== 1.Create a Database object and connect to the gRPC service
-     * =========================== **/
+    /** =========================== 1.Create a Database object and connect to the gRPC service =========================== **/
     
     greptime::Database database("public", "localhost:4001");
 
@@ -143,16 +142,15 @@ int main(int argc, char** argv) {
 
     /** =========================== 2.generate insert requests =========================== **/
     auto insert_request_1 = to_insert_request(weather_records_1());
-    auto insert_requests_1 = to_insert_requests({insert_request_1});
-
     auto insert_request_2 = to_insert_request(weather_records_2());
-    auto insert_requests_2 = to_insert_requests({insert_request_2});
+    auto insert_request_vec_1 = std::vector<InsertRequest>{insert_request_1};
+    auto insert_request_vec_2 = std::vector<InsertRequest>{insert_request_2};
 
     auto table_name = insert_request_1.table_name();
 
     /** =========================== 3.continue insert requests =========================== **/
-    stream_inserter.Write(insert_requests_1);
-    stream_inserter.Write(insert_requests_2);
+    stream_inserter.Write(insert_request_vec_1);
+    // stream_inserter.Write(insert_request_vec_2);
     stream_inserter.WriteDone();
     Status status = stream_inserter.Finish();
 

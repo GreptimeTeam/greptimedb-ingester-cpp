@@ -13,31 +13,61 @@
 // limitations under the License.
 
 #include "stream_inserter.h"
+#include <iostream>
 #include <memory>
+#include <ostream>
+#include "greptime/v1/database.pb.h"
 #include "grpcpp/client_context.h"
 
 namespace greptime {
     
 using greptime::v1::RequestHeader;
 
-bool StreamInserter::Write(InsertRequests &insert_requests) {
-    RequestHeader request_header;
-    request_header.set_dbname(dbname);
-    // avoid repetitive construction and destruction
-    thread_local GreptimeRequest greptime_request;
-    greptime_request.mutable_header()->Swap(&request_header);
-    greptime_request.mutable_inserts()->Swap(&insert_requests);
+void StreamInserter::Write(std::vector<InsertRequest> insert_request_vec) {
+    std::unique_lock<std::mutex> lk(mtx);
+    for (auto &insert_request : insert_request_vec) {
+        buffer.push(std::move(insert_request));
+    }
+    cv.notify_one();
+}
 
-    while(true) {
-        if (writer->Write(greptime_request)) {
-            return true; // Write successful
-        } else {
-            if (channel->GetState(true) == GRPC_CHANNEL_TRANSIENT_FAILURE) {
-                context = std::make_shared<grpc::ClientContext>();
-                context->set_wait_for_ready(true);
-                writer = stub->HandleRequests(context.get(), &response);
-            } else {
-                return false; // Write failed
+bool StreamInserter::Send(GreptimeRequest &greptime_request) {
+    return writer->Write(greptime_request);
+}
+
+void StreamInserter::RunHandleRequest() {
+    while (true) {
+        std::unique_lock<std::mutex> lk(mtx);
+        cv.wait(lk, [this]{
+            return !this->buffer.empty() || !this->scheduler_thread_is_running;
+        });
+        if (buffer.empty() && !scheduler_thread_is_running) {
+            break;
+        }
+
+        if (!buffer.empty()) {
+            size_t batch_byte = 0;
+            #define BATCH_BYTE_LIMIT 2981328
+            InsertRequests insert_requests;
+            while (!buffer.empty() && batch_byte < BATCH_BYTE_LIMIT) {
+                if (batch_byte + buffer.front().ByteSizeLong() > BATCH_BYTE_LIMIT) {
+                    break;
+                } 
+                auto insert_request = std::move(buffer.front());
+                buffer.pop();
+                batch_byte += insert_request.ByteSizeLong();
+                insert_requests.add_inserts()->Swap(&insert_request);
+            }
+            lk.unlock();
+            RequestHeader request_header;
+            request_header.set_dbname(dbname);
+
+            GreptimeRequest greptime_request;
+            greptime_request.mutable_header()->Swap(&request_header);
+            greptime_request.mutable_inserts()->Swap(&insert_requests); 
+            
+            if (!Send(greptime_request)) {
+                std::cout << "Greptime Request to large: " << greptime_request.ByteSizeLong() << std::endl;
             }
         }
     }
