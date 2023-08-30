@@ -138,8 +138,6 @@ int main(int argc, char** argv) {
     
     greptime::Database database("public", "localhost:4001");
 
-    auto stream_inserter = database.CreateStreamInserter();
-
     /** =========================== 2.generate insert requests =========================== **/
     auto insert_request_1 = to_insert_request(weather_records_1());
     auto insert_request_2 = to_insert_request(weather_records_2());
@@ -149,15 +147,15 @@ int main(int argc, char** argv) {
     auto table_name = insert_request_1.table_name();
 
     /** =========================== 3.continue insert requests =========================== **/
-    stream_inserter.Write(insert_request_vec_1);
+    database.stream_inserter.WriteBatch(insert_request_vec_1);
     // stream_inserter.Write(insert_request_vec_2);
-    stream_inserter.WriteDone();
-    Status status = stream_inserter.Finish();
+    database.stream_inserter.WriteDone();
+    Status status = database.stream_inserter.Finish();
 
     /** =========================== 4.handle return response =========================== **/
     if (status.ok()) {
         std::cout << "success!" << std::endl;
-        auto response = stream_inserter.GetResponse();
+        auto response = database.stream_inserter.GetResponse();
 
         std::cout << "notice: [";
         std::cout << response.affected_rows().value() << "] ";

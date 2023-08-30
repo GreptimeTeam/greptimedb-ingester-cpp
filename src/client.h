@@ -14,22 +14,24 @@
 
 #include <string>
 
-#include <greptime/v1/database.grpc.pb.h>
+#include <grpc/grpc.h>
 #include <grpcpp/channel.h>
+#include <grpcpp/grpcpp.h>
+#include <grpcpp/client_context.h>
+#include <greptime/v1/database.grpc.pb.h>
 
 namespace greptime {
 
 using greptime::v1::GreptimeDatabase;
 using grpc::Channel;
-using String = std::string;
 
 class GreptimeClient {
    public:
-    GreptimeClient(String greptimedb_endpoint_);
+    GreptimeClient(std::string greptimedb_endpoint_);
 
     std::shared_ptr<Channel> channel;
     std::shared_ptr<GreptimeDatabase::Stub> stub;
 
 };
 
-};  // namespace greptime
+}  // namespace greptime

@@ -13,25 +13,37 @@
 // limitations under the License.
 
 #include "stream_inserter.h"
-#include <iostream>
-#include <memory>
-#include <ostream>
-#include "greptime/v1/database.pb.h"
-#include "grpcpp/client_context.h"
 
 namespace greptime {
-    
-using greptime::v1::RequestHeader;
 
-void StreamInserter::Write(std::vector<InsertRequest> insert_request_vec) {
+#define BUFFER_SIZE 1000000
+
+void StreamInserter::Write(InsertRequest insert_request) {
     std::unique_lock<std::mutex> lk(mtx);
+    cv.wait(lk, [this]{
+        return this->buffer.size() + 1 < (BUFFER_SIZE);
+    });
+    buffer.push(std::move(insert_request));
+    cv.notify_one();
+}
+
+void StreamInserter::WriteBatch(std::vector<InsertRequest> insert_request_vec) {
+    size_t cnt = insert_request_vec.size();
+    if (cnt > BUFFER_SIZE) {
+        std::cout << "fail: data too many" << std::endl;
+        return;
+    }
+    std::unique_lock<std::mutex> lk(mtx);
+    cv.wait(lk, [this, cnt]{
+        return this->buffer.size() + cnt < (BUFFER_SIZE);
+    }); 
     for (auto &insert_request : insert_request_vec) {
         buffer.push(std::move(insert_request));
     }
     cv.notify_one();
 }
 
-bool StreamInserter::Send(GreptimeRequest &greptime_request) {
+bool StreamInserter::Send(const GreptimeRequest &greptime_request) {
     return writer->Write(greptime_request);
 }
 
@@ -73,4 +85,4 @@ void StreamInserter::RunHandleRequest() {
     }
 }
 
-};
+}  // namespace greptime

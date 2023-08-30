@@ -12,35 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <greptime/v1/database.grpc.pb.h>
-#include <grpcpp/channel.h>
+#include <queue>
+#include <mutex>
 #include <atomic>
+#include <memory>
+#include <thread>
 #include <cassert>
 #include <cstddef>
 #include <iostream>
-#include <memory>
-#include "greptime/v1/database.pb.h"
-#include "grpcpp/client_context.h"
-#include <thread>
-#include <queue>
 #include <condition_variable>
-#include <mutex>
+
+#include <grpcpp/channel.h>
+#include <grpcpp/client_context.h>
+#include <grpcpp/support/sync_stream.h>
+
+#include <greptime/v1/database.pb.h>
+#include <greptime/v1/database.grpc.pb.h>
+
 namespace greptime {
 
-using String = std::string;
 using greptime::v1::GreptimeDatabase;
 using greptime::v1::GreptimeRequest;
 using greptime::v1::GreptimeResponse;
 using greptime::v1::InsertRequest;
 using greptime::v1::InsertRequests;
+using greptime::v1::RequestHeader;
 using grpc::ClientContext;
 using grpc::Status;
 using grpc::Channel;
+using grpc::ClientWriter;
 
 class StreamInserter {
 public:
-    StreamInserter(String dbname_, std::shared_ptr<Channel> channel_, std::shared_ptr<GreptimeDatabase::Stub> stub_) :
-    dbname(dbname_), channel(channel_), stub(stub_){
+    StreamInserter(std::string dbname_, std::shared_ptr<Channel> channel_, std::shared_ptr<GreptimeDatabase::Stub> stub_) :
+            dbname(dbname_),
+            channel(channel_),
+            stub(stub_) {
         context = std::make_shared<ClientContext>();
         context->set_wait_for_ready(true);
         writer = std::move(stub_->HandleRequests(context.get(), &response));
@@ -52,9 +59,11 @@ public:
         delete scheduler_thread;
     }
 
-    void Write(std::vector<InsertRequest> insert_request_vec);
+    void Write(InsertRequest insert_request);
 
-    bool Send(GreptimeRequest &greptime_request);
+    void WriteBatch(std::vector<InsertRequest> insert_request_vec);
+
+    bool Send(const GreptimeRequest &greptime_request);
 
     void RunHandleRequest();
 
@@ -65,24 +74,25 @@ public:
         return writer->WritesDone();
     }
 
-    grpc::Status Finish() { return writer->Finish(); }
+    Status Finish() { return writer->Finish(); }
 
     GreptimeResponse GetResponse() { return response; }
 
 private:
-    String dbname;
+    std::string dbname;
     GreptimeResponse response;
     std::shared_ptr<ClientContext> context;
     std::shared_ptr<Channel> channel;
     std::shared_ptr<GreptimeDatabase::Stub> stub;
-    std::unique_ptr<grpc::ClientWriter<GreptimeRequest>> writer;
+    std::unique_ptr<ClientWriter<GreptimeRequest>> writer;
     
     ///background thread handle insert request
     std::thread *scheduler_thread;
     std::queue<InsertRequest> buffer; 
+    std::queue<GreptimeRequest> retry; 
     std::mutex mtx;
     std::condition_variable cv;
     bool scheduler_thread_is_running;
 };
 
-};  // namespace greptime
+}  // namespace greptime

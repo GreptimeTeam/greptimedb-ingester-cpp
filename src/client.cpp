@@ -13,15 +13,13 @@
 // limitations under the License.
 
 #include "client.h"
-#include <grpc/grpc.h>
-#include <grpcpp/grpcpp.h>
-#include <grpcpp/client_context.h>
+
 namespace greptime {
 
-GreptimeClient::GreptimeClient(String greptimedb_endpoint_)
+GreptimeClient::GreptimeClient(std::string greptimedb_endpoint_)
     : channel(grpc::CreateChannel(greptimedb_endpoint_, grpc::InsecureChannelCredentials())), 
       stub(GreptimeDatabase::NewStub(channel)) {
 
 }
-      
-};  // namespace greptime
+
+}  // namespace greptime
