@@ -42,6 +42,11 @@ using grpc::Status;
 using grpc::Channel;
 using grpc::ClientWriter;
 
+/// StreamInserter is a single-producer single-consumer(SPSC) model.
+/// When writing or WriteBatch is called, only the Request is written to the Buffer.
+/// To prevent OOM, the Buffer has a capacity limit determined by BUFFER_SIZE
+/// A background thread periodically obtains a batch of Requests from the Buffer and sends a batch through the gRPC.
+/// The number of requests in a batch is determined by BATCH_BYTE_LIMIT
 class StreamInserter {
 public:
     StreamInserter(std::string dbname_, std::shared_ptr<Channel> channel_, std::shared_ptr<GreptimeDatabase::Stub> stub_) :
@@ -59,14 +64,19 @@ public:
         delete scheduler_thread;
     }
 
+    /// Write a InsertRequest into Buffer
     void Write(InsertRequest insert_request);
 
+    /// Write a batch of InsertRequests into Buffer
     void WriteBatch(std::vector<InsertRequest> insert_request_vec);
 
+    /// sends a GreptimeRequest consisted of a batch of InsertRequests through the gRPC.
     bool Send(const GreptimeRequest &greptime_request);
 
+    /// A background thread periodically obtains a batch of Requests from the Buffer and sends a batch through the gRPC.
     void RunHandleRequest();
 
+    /// WriteDone confirm all requests in std::queue are sent
     bool WriteDone() {
         scheduler_thread_is_running = false;
         cv.notify_one();
@@ -74,9 +84,15 @@ public:
         return writer->WritesDone();
     }
 
+    /// Finish will return grpc Status
+    /// See \a grpc::StatusCode for details on the available code 
     Status Finish() { return writer->Finish(); }
 
     GreptimeResponse GetResponse() { return response; }
+
+protected:
+    static constexpr size_t BUFFER_SIZE = 1000000;
+    static constexpr size_t BATCH_BYTE_LIMIT = 2981328;
 
 private:
     std::string dbname;

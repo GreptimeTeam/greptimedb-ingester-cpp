@@ -16,12 +16,10 @@
 
 namespace greptime {
 
-#define BUFFER_SIZE 1000000
-
 void StreamInserter::Write(InsertRequest insert_request) {
     std::unique_lock<std::mutex> lk(mtx);
     cv.wait(lk, [this]{
-        return this->buffer.size() + 1 < (BUFFER_SIZE);
+        return this->buffer.size() + 1 < BUFFER_SIZE;
     });
     buffer.push(std::move(insert_request));
     cv.notify_one();
@@ -35,7 +33,7 @@ void StreamInserter::WriteBatch(std::vector<InsertRequest> insert_request_vec) {
     }
     std::unique_lock<std::mutex> lk(mtx);
     cv.wait(lk, [this, cnt]{
-        return this->buffer.size() + cnt < (BUFFER_SIZE);
+        return this->buffer.size() + cnt < BUFFER_SIZE;
     }); 
     for (auto &insert_request : insert_request_vec) {
         buffer.push(std::move(insert_request));
@@ -59,7 +57,6 @@ void StreamInserter::RunHandleRequest() {
 
         if (!buffer.empty()) {
             size_t batch_byte = 0;
-            #define BATCH_BYTE_LIMIT 2981328
             InsertRequests insert_requests;
             while (!buffer.empty() && batch_byte < BATCH_BYTE_LIMIT) {
                 if (batch_byte + buffer.front().ByteSizeLong() > BATCH_BYTE_LIMIT) {
