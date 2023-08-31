@@ -16,11 +16,13 @@
 
 namespace greptime {
 
-Database::Database(String dbname_, String greptimedb_endpoint_) : dbname(std::move(dbname_)), client(greptimedb_endpoint_) {}
+Database::Database(std::string dbname_, std::string greptimedb_endpoint_) :
+            dbname(std::move(dbname_)),
+            client(std::move(greptimedb_endpoint_)),
+            stream_inserter(StreamInserter(dbname,client.channel, client.stub)){}
 
 StreamInserter Database::CreateStreamInserter() {
     return StreamInserter(dbname,client.channel, client.stub);
 }
 
-
-};  // namespace greptime
+}  // namespace greptime
