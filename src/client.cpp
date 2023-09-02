@@ -17,9 +17,7 @@
 namespace greptime {
 
 GreptimeClient::GreptimeClient(std::string greptimedb_endpoint_)
-    : channel(grpc::CreateChannel(greptimedb_endpoint_, grpc::InsecureChannelCredentials())), 
-      stub(GreptimeDatabase::NewStub(channel)) {
-
-}
-
+    : channel(grpc::CreateChannel(greptimedb_endpoint_,
+                                  grpc::InsecureChannelCredentials())),
+      stub(GreptimeDatabase::NewStub(channel)) {}
 }  // namespace greptime

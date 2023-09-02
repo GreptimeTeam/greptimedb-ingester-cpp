@@ -1,10 +1,8 @@
 # IDEA
-
 .idea
-
 .uuid
-
 .a
+
 # Prerequisites
 *.d
 
@@ -52,6 +50,11 @@ CTestTestfile.cmake
 _deps
 cmake-build-debug
 
+# misc.
 .cache
 
+# vscode configs.
 .vscode
+
+# target files.
+build

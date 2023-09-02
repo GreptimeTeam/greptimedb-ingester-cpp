@@ -19,17 +19,17 @@ namespace greptime {
 using greptime::v1::InsertRequests;
 
 class Database {
-public:
-    Database(std::string dbname_, std::string greptimedb_endpoint_);
+ public:
+  Database(std::string dbname_, std::string greptimedb_endpoint_);
 
-    StreamInserter CreateStreamInserter(); 
+  StreamInserter CreateStreamInserter();
 
-private:
-    std::string dbname;
-    GreptimeClient client;
+ private:
+  std::string dbname;
+  GreptimeClient client;
 
-public:
-    StreamInserter stream_inserter;
+ public:
+  StreamInserter stream_inserter;
 };
 
 }  // namespace greptime

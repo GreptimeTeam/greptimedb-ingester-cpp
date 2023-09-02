@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
-
+#include <greptime/v1/database.grpc.pb.h>
 #include <grpc/grpc.h>
 #include <grpcpp/channel.h>
-#include <grpcpp/grpcpp.h>
 #include <grpcpp/client_context.h>
-#include <greptime/v1/database.grpc.pb.h>
+#include <grpcpp/grpcpp.h>
+
+#include <string>
 
 namespace greptime {
 
@@ -26,12 +26,11 @@ using greptime::v1::GreptimeDatabase;
 using grpc::Channel;
 
 class GreptimeClient {
-   public:
-    GreptimeClient(std::string greptimedb_endpoint_);
+ public:
+  GreptimeClient(std::string greptimedb_endpoint_);
 
-    std::shared_ptr<Channel> channel;
-    std::shared_ptr<GreptimeDatabase::Stub> stub;
-
+  std::shared_ptr<Channel> channel;
+  std::shared_ptr<GreptimeDatabase::Stub> stub;
 };
 
 }  // namespace greptime
