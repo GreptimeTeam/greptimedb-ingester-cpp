@@ -21,12 +21,9 @@ set(CMAKE_CXX_STANDARD 17)
 # set the variable name for the greptime-client-cpp library.
 set(GREPTIME_CLIENT_CPP_LIB greptime_client_cpp_lib)
 
-# a trick to work around cmake issues.
-# see: https://github.com/protocolbuffers/protobuf/issues/12185#issuecomment-1594685860
-set(ABSL_ENABLE_INSTALL ON)
-
-# include header files required by the greptime-proto library.
+# add grpc files to be found by the greptime-proto library.
 include_directories(
+  third_party/grpc/include
   third_party/grpc/third_party/protobuf/src
   third_party/grpc/third_party/abseil-cpp
 )

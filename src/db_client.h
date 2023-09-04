@@ -27,13 +27,13 @@ using greptime::v1::GreptimeResponse;
 
 class DbClient {
   const std::string db_name_;
-  const std::shared_ptr<grpc::Channel> channel_;
-  const std::shared_ptr<GreptimeDatabase::Stub> stub_;
+  std::shared_ptr<grpc::Channel> channel_;
+  std::shared_ptr<GreptimeDatabase::Stub> stub_;
 
  public:
   DbClient(const std::string& db_name, const std::string& db_grpc_endpoint);
 
-  StreamInserter new_stream_inserter(const GreptimeResponse* response);
+  StreamInserter new_stream_inserter(GreptimeResponse* response);
 };
 
 }  // namespace greptime

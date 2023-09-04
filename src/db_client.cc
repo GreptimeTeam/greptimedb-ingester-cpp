@@ -20,6 +20,7 @@
 
 #include "greptime/v1/database.grpc.pb.h"  // greptime database
 #include "greptime/v1/database.pb.h"       // greptime response
+#include "grpcpp/create_channel.h"         // create channel
 #include "grpcpp/security/credentials.h"   // insecure channel credentials
 
 namespace greptime {
@@ -29,9 +30,9 @@ DbClient::DbClient(const std::string& db_name, const std::string& db_grpc_endpoi
       channel_{grpc::CreateChannel(db_grpc_endpoint, grpc::InsecureChannelCredentials())},
       stub_{GreptimeDatabase::NewStub(channel_)} {}
 
-StreamInserter DbClient::new_stream_inserter(const GreptimeResponse* response) {
+StreamInserter DbClient::new_stream_inserter(GreptimeResponse* response) {
   assert(response != nullptr && "invalid arg: response = nullptr");
-  return StreamInserter(response, this->stub_.get());
+  return StreamInserter(response, db_name_, this->stub_.get());
 }
 
 }  // namespace greptime

@@ -24,7 +24,7 @@
 
 #include "greptime/v1/common.pb.h"         // request header
 #include "greptime/v1/database.grpc.pb.h"  // greptime database
-#include "greptime/v1/database.pb.h"       // greptime request, greptime response, row insert request
+#include "greptime/v1/database.pb.h"       // greptime request, greptime response, row insert request/requests
 #include "grpc/status.h"                   // status
 #include "grpcpp/client_context.h"         // client context
 #include "grpcpp/support/sync_stream.h"    // client writer
@@ -36,18 +36,18 @@ using greptime::v1::GreptimeRequest;
 using greptime::v1::GreptimeResponse;
 using greptime::v1::RequestHeader;
 using greptime::v1::RowInsertRequest;
+using greptime::v1::RowInsertRequests;
 
 // forward declaration.
 namespace util {
-GreptimeRequest make_greptime_request(const std::string& db_name, const RowInsertRequests& row_insert_request_batch);
+static GreptimeRequest make_greptime_request(const std::string& db_name, RowInsertRequests* row_insert_request_batch);
 }  // namespace util
 
-StreamInserter::StreamInserter(const GreptimeResponse* response, const std::string& db_name,
-                               const GreptimeDatabase::Stub* stub)
+StreamInserter::StreamInserter(GreptimeResponse* response, const std::string& db_name, GreptimeDatabase::Stub* stub)
     : db_name_{db_name} {
   grpc_clt_ctx_ = std::make_unique<grpc::ClientContext>();
   grpc_clt_ctx_->set_wait_for_ready(true);
-  writer_ = std::move(stub->HandleRequests(grpc_clt_ctx_->get(), &response));
+  writer_ = std::move(stub->HandleRequests(grpc_clt_ctx_.get(), response));
 
   sender_thread_ = std::thread(&StreamInserter::sender, this);
 }
@@ -56,7 +56,7 @@ void StreamInserter::feed_one(RowInsertRequest& row_insert_request) {
   std::unique_lock<std::mutex> lock(mutex_);
 
   while (pending_que_.size() >= StreamInserter::PENDING_QUEUE_CAPACITY) {
-    not_full_cv_.wait(lock, [this] { return this->pending_que_.size() < StreamInserter::PENDING_QUEUE_CAPACITY; })
+    not_full_cv_.wait(lock, [this] { return this->pending_que_.size() < StreamInserter::PENDING_QUEUE_CAPACITY; });
   }
   pending_que_.push(std::move(row_insert_request));
 
@@ -88,7 +88,7 @@ void StreamInserter::sender() {
     std::unique_lock<std::mutex> lock(mutex_);
 
     while (!pending_que_.empty() && !done_) {
-      not_empty_cv_.wait(lock, [this] { return !this->pending_que_.empty() || this->done_; })
+      not_empty_cv_.wait(lock, [this] { return !this->pending_que_.empty() || this->done_; });
     }
 
     if (!pending_que_.empty()) {
@@ -105,12 +105,12 @@ void StreamInserter::sender() {
 
       lock.unlock();
 
-      if (row_insert_request_batch.empty()) {
+      if (row_insert_request_batch.inserts_size() == 0) {
         continue;
       }
       not_full_cv_.notify_all();
 
-      const GreptimeRequest greptime_request = util::make_greptime_request(db_name_, row_insert_request_batch);
+      const GreptimeRequest greptime_request = util::make_greptime_request(db_name_, &row_insert_request_batch);
       if (!writer_->Write(greptime_request)) {
         std::cerr << "error in sending greptime request. request_size = " << greptime_request.ByteSizeLong()
                   << std::endl;
@@ -129,21 +129,20 @@ bool StreamInserter::writes_done() {
 
   sender_thread_.join();
 
-  return writer->WritesDone();
+  return writer_->WritesDone();
 }
 
-grpc::Status StreamInserter::finish() { return writer->Finish(); }
+grpc::Status StreamInserter::finish() { return writer_->Finish(); }
 
 namespace util {
 
-static GreptimeRequest make_greptime_request(const std::string& db_name,
-                                             const RowInsertRequests& row_insert_request_batch) {
+GreptimeRequest make_greptime_request(const std::string& db_name, RowInsertRequests* row_insert_request_batch) {
   RequestHeader request_header;
-  request_header.set_dbname(dbname);
+  request_header.set_dbname(db_name);
 
   GreptimeRequest greptime_request;
   greptime_request.mutable_header()->Swap(&request_header);
-  greptime_request.mutable_inserts()->Swap(&row_insert_request_batch);
+  greptime_request.mutable_row_inserts()->Swap(row_insert_request_batch);
 
   return greptime_request;
 }

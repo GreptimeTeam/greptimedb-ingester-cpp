@@ -52,7 +52,7 @@ class StreamInserter {
   bool done_ = false;
 
  public:
-  StreamInserter(const GreptimeResponse* response, const std::string& db_name, const GreptimeDatabase::Stub* stub);
+  StreamInserter(GreptimeResponse* response, const std::string& db_name, GreptimeDatabase::Stub* stub);
 
   void feed_one(RowInsertRequest& row_insert_request);
   // try to feed a batch of requests into the pending queue.
