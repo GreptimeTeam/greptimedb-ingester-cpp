@@ -12,15 +12,13 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-project(greptimedb_client_lib)
-
-set(OUTPUT_SOURCES client.cpp database.cpp stream_inserter.cpp)
-
-add_library(${PROJECT_NAME} ${OUTPUT_SOURCES})
-
-# greptime lib
-target_link_libraries(${PROJECT_NAME} PUBLIC greptime_proto_cpp_lib)
-
-# third party lib
-target_link_libraries(${PROJECT_NAME} PUBLIC grpc grpc++)
+set(${GREPTIME_CLIENT_CPP_LIB_SOURCE_FILES} db_client.hpp stream_inserter.hpp)
+include_directories(
+  ${CMAKE_SOURCE_DIR}/third-party/grpc/grpcpp
+  ${CMAKE_SOURCE_DIR}/contrib/greptime-proto/c++
+  # ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/abseil-cpp
+  # ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/protobuf/src)
+)
+add_library(${GREPTIME_CLIENT_CPP_LIB} ${GREPTIME_CLIENT_CPP_LIB_SOURCE_FILES})
+target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE greptime_proto_cpp_lib
+                                                         grpc)

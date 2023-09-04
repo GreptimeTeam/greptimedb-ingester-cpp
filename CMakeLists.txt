@@ -13,27 +13,20 @@
 # the License.
 
 cmake_minimum_required(VERSION 3.22)
-project(
-  greptimedb-client-cpp
-  VERSION 0.1
-  LANGUAGES CXX)
+project(greptimedb-client-cpp VERSION 0.1)
 
-# generate complie_commands.json
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# set cpp standard.
+set(CMAKE_CXX_STANDARD 11)
 
-# set project root directory
-set(GREPTIMEDB_CLIENT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+# set the variable name for the greptime-client-cpp library.
+set(GREPTIME_CLIENT_CPP_LIB greptime_client_cpp_lib)
 
-set(GREPTIMEDB_CLIENT_THIRD_PARTY_INCLUDE_DIR
-    ${GREPTIMEDB_CLIENT_ROOT_DIR}
-    ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib
-    ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/greptime-proto/c++
-    ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/include
-    ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/abseil-cpp
-    ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/protobuf/src)
-
-include_directories(${GREPTIMEDB_CLIENT_THIRD_PARTY_INCLUDE_DIR})
-
-add_subdirectory(contrib)
+# build the project tree by specifying all sub-projects as sub-directories.
+#
+# warning: add all third-party and contrib projects directly by specifying their
+# relative paths rather than creating CMakeLists.txt files in their
+# corresponding directories.
+add_subdirectory(third-party/grpc)
+add_subdirectory(contrib/greptime-proto)
 add_subdirectory(src)
 add_subdirectory(examples)

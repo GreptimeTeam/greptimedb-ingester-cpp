@@ -1,4 +1,4 @@
 BasedOnStyle: Google
-ColumnLimit: 80
+ColumnLimit: 120
 TabWidth: 2
 IndentWidth: 2

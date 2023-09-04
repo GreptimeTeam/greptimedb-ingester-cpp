@@ -12,8 +12,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-set(CLIENT_STREAM example_client_stream)
-add_executable(${CLIENT_STREAM} client_stream.cpp)
-
-# greptime lib
-target_link_libraries(${CLIENT_STREAM} PUBLIC greptimedb_client_lib)
+set(EXAMPLE_TARGET example_stream_inserter)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(${EXAMPLE_TARGET} stream_insert.cc)
+# for link options: PRIVATE, INTERFACE, PUBLIC, see:
+# https://cmake.org/pipermail/cmake/2016-May/063400.html
+target_link_libraries(${EXAMPLE_TARGET} PRIVATE ${GREPTIME_CLIENT_CPP_LIB})

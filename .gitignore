@@ -52,6 +52,7 @@ cmake-build-debug
 
 # misc.
 .cache
+.DS_Store
 
 # vscode configs.
 .vscode
