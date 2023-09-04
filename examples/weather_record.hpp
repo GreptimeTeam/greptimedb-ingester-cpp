@@ -73,7 +73,7 @@ class WeatherRecordFactory {
   }
 };
 
-void add_column_schema(Rows* rows, const std::string& column_name, const ColumnDataType& data_type,
+static void add_column_schema(Rows* rows, const std::string& column_name, const ColumnDataType& data_type,
                        const SemanticType& semantic_type) {
   ColumnSchema column_schema;
   column_schema.set_column_name(column_name);

@@ -144,7 +144,7 @@ class StreamInserter {
 
 namespace util {
 
-GreptimeRequest make_greptime_request(const std::string& db_name, const RowInsertRequests& row_insert_request_batch) {
+static GreptimeRequest make_greptime_request(const std::string& db_name, const RowInsertRequests& row_insert_request_batch) {
   RequestHeader request_header;
   request_header.set_dbname(dbname);
 
