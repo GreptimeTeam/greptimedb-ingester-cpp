@@ -1,10 +1,7 @@
-# [submodule "contrib/greptime-proto"]
-# 	path = contrib/greptime-proto
-# 	url = https://github.com/GreptimeTeam/greptime-proto.git
-# 	branch = main
-
-# # # v1.46.x is the last grpc branch which requires support only from c++11.
-# [submodule "third-party/grpc"]
-# 	path = third-party/grpc
+[submodule "contrib/greptime-proto"]
+	path = contrib/greptime-proto
+	url = https://github.com/GreptimeTeam/greptime-proto.git
+# [submodule "third_party/grpc"]
+# 	path = third_party/grpc
 # 	url = https://github.com/grpc/grpc
 # 	branch = v1.57.x

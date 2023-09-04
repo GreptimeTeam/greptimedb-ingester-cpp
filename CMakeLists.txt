@@ -16,14 +16,19 @@ cmake_minimum_required(VERSION 3.22)
 project(greptimedb-client-cpp VERSION 0.1)
 
 # set cpp standard.
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 # set the variable name for the greptime-client-cpp library.
 set(GREPTIME_CLIENT_CPP_LIB greptime_client_cpp_lib)
 
+# a trick to work around cmake issues.
+# see: https://github.com/protocolbuffers/protobuf/issues/12185#issuecomment-1594685860
+set(ABSL_ENABLE_INSTALL ON)
+
 # include header files required by the greptime-proto library.
 include_directories(
   third_party/grpc/third_party/protobuf/src
+  third_party/grpc/third_party/abseil-cpp
 )
 
 # build the project tree by specifying all sub-projects as sub-directories.
