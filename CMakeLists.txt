@@ -27,6 +27,6 @@ set(GREPTIME_CLIENT_CPP_LIB greptime_client_cpp_lib)
 # relative paths rather than creating CMakeLists.txt files in their
 # corresponding directories.
 add_subdirectory(third-party/grpc)
-add_subdirectory(contrib/greptime-proto)
+add_subdirectory(contrib/greptime-proto/c++)
 add_subdirectory(src)
 add_subdirectory(examples)

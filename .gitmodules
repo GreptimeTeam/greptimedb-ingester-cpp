@@ -1,11 +1,9 @@
 [submodule "contrib/greptime-proto"]
 	path = contrib/greptime-proto
 	url = https://github.com/GreptimeTeam/greptime-proto.git
-	ignore = dirty
 
 # v1.46.7 is the last grpc release which requires support only from c++11.
 [submodule "third-party/grpc"]
 	path = third-party/grpc
 	url = https://github.com/grpc/grpc
 	branch = v1.46.x
-	ignore = dirty
