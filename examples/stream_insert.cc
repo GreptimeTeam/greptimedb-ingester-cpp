@@ -16,12 +16,12 @@
 #include <string>    // std::string
 #include <vector>    // std::vector
 
+#include "db_client.h"
 #include "greptime/v1/common.pb.h"
 #include "greptime/v1/database.grpc.pb.h"
 #include "greptime/v1/database.pb.h"
 #include "grpc/grpc.h"
 #include "grpc/status.h"
-#include "src/db_client.hpp"
 #include "weather_record.hpp"
 
 using greptime::v1::GreptimeResponse;

@@ -3,8 +3,8 @@
 # 	url = https://github.com/GreptimeTeam/greptime-proto.git
 # 	branch = main
 
-# # v1.46.x is the last grpc branch which requires support only from c++11.
+# # # v1.46.x is the last grpc branch which requires support only from c++11.
 # [submodule "third-party/grpc"]
 # 	path = third-party/grpc
 # 	url = https://github.com/grpc/grpc
-# 	branch = v1.46.x
+# 	branch = v1.57.x

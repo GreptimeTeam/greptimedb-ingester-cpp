@@ -12,13 +12,16 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-set(${GREPTIME_CLIENT_CPP_LIB_SOURCE_FILES} db_client.hpp stream_inserter.hpp)
 include_directories(
-  ${CMAKE_SOURCE_DIR}/third-party/grpc/grpcpp
+  ${CMAKE_SOURCE_DIR}/include 
+  ${CMAKE_SOURCE_DIR}/third_party/grpc/grpcpp
   ${CMAKE_SOURCE_DIR}/contrib/greptime-proto/c++
-  # ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/abseil-cpp
-  # ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/protobuf/src)
 )
-add_library(${GREPTIME_CLIENT_CPP_LIB} ${GREPTIME_CLIENT_CPP_LIB_SOURCE_FILES})
-target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE greptime_proto_cpp_lib
-                                                         grpc)
+add_library(${GREPTIME_CLIENT_CPP_LIB}
+  db_client.cc
+  stream_inserter.cc
+)
+target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
+  greptime_proto_cpp_lib
+  grpc
+)

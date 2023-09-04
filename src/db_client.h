@@ -12,22 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cassert>  // assert
-#include <memory>   // std::shared_ptr
-#include <string>   // std::string
+#include <memory>  // std::shared_ptr
+#include <string>  // std::string
 
-#include "greptime/v1/database.grpc.pb.h"
-#include "greptime/v1/database.pb.h"
-#include "grpcpp/channel.h"
-#include "grpcpp/client_context.h"
-#include "stream_inserter.hpp"
+#include "greptime/v1/database.grpc.pb.h"  // greptime database
+#include "greptime/v1/database.pb.h"       // greptime response
+#include "grpcpp/channel.h"                // channel
+#include "stream_inserter.h"               // stream inserter
 
 namespace greptime {
 
 using greptime::v1::GreptimeDatabase;
 using greptime::v1::GreptimeResponse;
-
-class StreamInserter;
 
 class DbClient {
   const std::string db_name_;
@@ -35,15 +31,9 @@ class DbClient {
   const std::shared_ptr<GreptimeDatabase::Stub> stub_;
 
  public:
-  DbClient(const std::string& db_name, const std::string& db_grpc_endpoint)
-      : db_name_{db_name},
-        channel_{grpc::CreateChannel(db_grpc_endpoint, grpc::InsecureChannelCredentials())},
-        stub_{GreptimeDatabase::NewStub(channel_)} {}
+  DbClient(const std::string& db_name, const std::string& db_grpc_endpoint);
 
-  StreamInserter new_stream_inserter(const GreptimeResponse* response) {
-    assert(response != nullptr && "invalid arg: response = nullptr");
-    return StreamInserter(response, this->stub_.get());
-  }
+  StreamInserter new_stream_inserter(const GreptimeResponse* response);
 };
 
 }  // namespace greptime
