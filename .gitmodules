@@ -6,4 +6,4 @@
 [submodule "third-party/grpc"]
 	path = third-party/grpc
 	url = https://github.com/grpc/grpc
-	branch = tags/v1.46.7
+	branch = v1.46.x
