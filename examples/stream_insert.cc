@@ -17,18 +17,13 @@
 #include <vector>    // std::vector
 
 #include "db_client.h"
-#include "greptime/v1/common.pb.h"
-#include "greptime/v1/database.grpc.pb.h"
-#include "greptime/v1/database.pb.h"
-#include "grpc/grpc.h"
-#include "grpc/status.h"
-#include "weather_record.hpp"
+#include "greptime/v1/database.pb.h"  // row insert request, greptime database
+#include "grpc/status.h"              // status
+#include "stream_inserter.h"
+#include "weather_record.h"
 
 using greptime::v1::GreptimeResponse;
 using greptime::v1::RowInsertRequest;
-
-// initialize static members.
-uint64_t WeatherRecordFactory::last_timestamp = 1000000;
 
 int main() {
   static const std::string DEFAULT_DATABASE_NAME = "public";

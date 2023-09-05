@@ -12,69 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "weather_record.h"
+
 #include <cassert>  // assert
 #include <random>   // std::default_random_engine, std::uniform_int_distribution, std::uniform_real_distribution
 #include <string>   // std::string
 #include <vector>   // std::vector
 
-#include "greptime/v1/common.pb.h"
-#include "greptime/v1/row.pb.h"
+#include "greptime/v1/common.pb.h"    // column data type, semantic type
+#include "greptime/v1/database.pb.h"  // row insert request,
+#include "greptime/v1/row.pb.h"       // rows, row, value, column schema,
 
 using greptime::v1::ColumnDataType;
 using greptime::v1::ColumnSchema;
 using greptime::v1::Row;
+using greptime::v1::RowInsertRequest;
 using greptime::v1::Rows;
 using greptime::v1::SemanticType;
 using greptime::v1::Value;
 
-// FIXME(niebayes): ensure all the field types are compatible with the ARM
-// platforms.
-struct WeatherRecord {
-  static const std::string TABLE_NAME = "example_weather_table";
-  uint64_t timestamp;
-  std::string collector_id;
-  float temperature;
-  // FIXME(niebayes): could humidity be negative? Or this is relative humidity?
-  int32_t humidity;
-};
+WeatherRecord WeatherRecordFactory::make_one() {
+  static std::default_random_engine rng;
+  // FIXME(niebayes): replace magic numbers with meaningful macros or consts.
+  static std::uniform_int_distribution<uint64_t> timestamp_delta_distribution(100, 500);
+  static std::uniform_int_distribution<int8_t> collector_id_suffix_distribution(1, 9);
+  static std::uniform_real_distribution<float> temperature_distribution(0.0, 50.0);
+  static std::uniform_int_distribution<int32_t> humidity_distribution(0, 100);
 
-class WeatherRecordFactory {
-  static const std::string COLLECTOR_ID_PREFIX = "collector_id_";
-  static uint64_t last_timestamp;
+  const WeatherRecord record = WeatherRecord{
+      .timestamp = last_timestamp + timestamp_delta_distribution(rng),
+      .collector_id = COLLECTOR_ID_PREFIX + std::to_string(collector_id_suffix_distribution(rng)),
+      .temperature = temperature_distribution(rng),
+      .humidity = humidity_distribution(rng),
+  };
 
-  static WeatherRecord make_one() {
-    static std::default_random_engine rng;
-    // FIXME(niebayes): replace magic numbers with meaningful macros or consts.
-    static std::uniform_int_distribution<uint64_t> timestamp_delta_distribution(100, 500);
-    static std::uniform_int_distribution<int8_t> collector_id_suffix_distribution(1, 9);
-    static std::uniform_real_distribution<float> temperature_distribution(0.0, 50.0);
-    static std::uniform_int_distribution<int32_t> humidity_distribution(0, 100);
+  last_timestamp = record.timestamp;
 
-    const WeatherRecord record = WeatherRecord{
-        .timestamp = last_timestamp + timestamp_delta_distribution(rng),
-        .collector_id = COLLECTOR_ID_PREFIX + std::to_string(collector_id_suffix_distribution(rng)),
-        .temperature = temperature_distribution(rng),
-        .humidity = humidity_distribution(rng),
-    };
+  return record;
+}
 
-    last_timestamp = record.timestamp;
+std::vector<WeatherRecord> WeatherRecordFactory::make_many(const size_t num_records) {
+  assert(num_records > 0 && "invalid arg: num_records = 0");
 
-    return record;
+  std::vector<WeatherRecord> records(num_records);
+  for (WeatherRecord& record : records) {
+    record = WeatherRecordFactory::make_one();
   }
-
-  static std::vector<WeatherRecord> make_many(const size_t num_records) {
-    assert(num_records > 0 && "invalid arg: num_records = 0");
-
-    std::vector<WeatherRecord> records(num_records);
-    for (WeatherRecord& record : records) {
-      record = WeatherRecordFactory::make_one();
-    }
-    return records;
-  }
-};
+  return records;
+}
 
 static void add_column_schema(Rows* rows, const std::string& column_name, const ColumnDataType& data_type,
-                       const SemanticType& semantic_type) {
+                              const SemanticType& semantic_type) {
   ColumnSchema column_schema;
   column_schema.set_column_name(column_name);
   column_schema.set_datatype(data_type);

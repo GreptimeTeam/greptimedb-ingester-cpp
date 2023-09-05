@@ -14,10 +14,10 @@
 
 set(EXAMPLE_TARGET example_stream_inserter)
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/src
 )
-add_executable(${EXAMPLE_TARGET} stream_insert.cc)
+add_executable(${EXAMPLE_TARGET} stream_insert.cc weather_record.cc)
 # for link options: PRIVATE, INTERFACE, PUBLIC, see:
 # https://cmake.org/pipermail/cmake/2016-May/063400.html
 target_link_libraries(${EXAMPLE_TARGET} PRIVATE ${GREPTIME_CLIENT_CPP_LIB})

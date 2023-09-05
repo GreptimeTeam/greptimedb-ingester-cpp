@@ -21,11 +21,12 @@ set(CMAKE_CXX_STANDARD 17)
 # set the variable name for the greptime-client-cpp library.
 set(GREPTIME_CLIENT_CPP_LIB greptime_client_cpp_lib)
 
-# add grpc files to be found by the greptime-proto library.
+# add header file search paths for contrib and third-party projects.
 include_directories(
   third_party/grpc/include
   third_party/grpc/third_party/protobuf/src
   third_party/grpc/third_party/abseil-cpp
+  contrib/greptime-proto/c++
 )
 
 # build the project tree by specifying all sub-projects as sub-directories.

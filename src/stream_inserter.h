@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#pragma once
+
 #include <condition_variable>  // std::condition_variable
 #include <memory>              // std::unique_ptr
 #include <mutex>               // std::mutex
@@ -54,10 +56,10 @@ class StreamInserter {
  public:
   StreamInserter(GreptimeResponse* response, const std::string& db_name, GreptimeDatabase::Stub* stub);
 
-  void feed_one(RowInsertRequest& row_insert_request);
+  void feed_one(const RowInsertRequest& row_insert_request);
   // try to feed a batch of requests into the pending queue.
   // if no enough space, degrade to feeding requests one by one.
-  void feed_batch(std::vector<RowInsertRequest>& row_insert_request_batch);
+  void feed_batch(const std::vector<RowInsertRequest>& row_insert_request_batch);
   // FIXME(niebayes): should be static?
   void sender();
   bool writes_done();

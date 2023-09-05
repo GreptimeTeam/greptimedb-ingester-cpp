@@ -52,32 +52,32 @@ StreamInserter::StreamInserter(GreptimeResponse* response, const std::string& db
   sender_thread_ = std::thread(&StreamInserter::sender, this);
 }
 
-void StreamInserter::feed_one(RowInsertRequest& row_insert_request) {
+void StreamInserter::feed_one(const RowInsertRequest& row_insert_request) {
   std::unique_lock<std::mutex> lock(mutex_);
 
   while (pending_que_.size() >= StreamInserter::PENDING_QUEUE_CAPACITY) {
     not_full_cv_.wait(lock, [this] { return this->pending_que_.size() < StreamInserter::PENDING_QUEUE_CAPACITY; });
   }
-  pending_que_.push(std::move(row_insert_request));
+  pending_que_.push(row_insert_request);
 
   not_empty_cv_.notify_one();
 }
 
 // try to feed a batch of requests into the pending queue.
 // if no enough space, degrade to feeding requests one by one.
-void StreamInserter::feed_batch(std::vector<RowInsertRequest>& row_insert_request_batch) {
+void StreamInserter::feed_batch(const std::vector<RowInsertRequest>& row_insert_request_batch) {
   std::unique_lock<std::mutex> lock(mutex_);
 
   const size_t delta = row_insert_request_batch.size();
   if (pending_que_.size() + delta <= StreamInserter::PENDING_QUEUE_CAPACITY) {
-    for (RowInsertRequest& row_insert_request : row_insert_request_batch) {
-      pending_que_.push(std::move(row_insert_request));
+    for (const RowInsertRequest& row_insert_request : row_insert_request_batch) {
+      pending_que_.push(row_insert_request);
     }
 
   } else {
     lock.unlock();
 
-    for (RowInsertRequest& row_insert_request : row_insert_request_batch) {
+    for (const RowInsertRequest& row_insert_request : row_insert_request_batch) {
       this->feed_one(row_insert_request);
     }
   }
