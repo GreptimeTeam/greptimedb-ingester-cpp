@@ -18,10 +18,10 @@
 #include <memory>   // std::shared_ptr
 #include <string>   // std::string
 
-#include "greptime/v1/database.grpc.pb.h"  // greptime database
-#include "greptime/v1/database.pb.h"       // greptime response
-#include "grpcpp/create_channel.h"         // create channel
-#include "grpcpp/security/credentials.h"   // insecure channel credentials
+#include "grpcpp/create_channel.h"        // create channel
+#include "grpcpp/security/credentials.h"  // insecure channel credentials
+#include "proto/database.grpc.pb.h"       // greptime database
+#include "proto/database.pb.h"            // greptime response
 
 namespace greptime {
 

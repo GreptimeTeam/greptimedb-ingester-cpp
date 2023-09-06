@@ -12,29 +12,39 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-cmake_minimum_required(VERSION 3.22)
+# set the required min cmake version to 3.13 which was released in 2018. This
+# may hopefully mitigate the compatability issues.
+cmake_minimum_required(VERSION 3.13)
 project(greptimedb-client-cpp VERSION 0.1)
 
-# set cpp standard.
-set(CMAKE_CXX_STANDARD 17)
+# set the required cpp standard to c++11.
+set(CMAKE_CXX_STANDARD 11)
 
-# set the variable name for the greptime-client-cpp library.
+# bind a variable to be reused by sub-projects.
 set(GREPTIME_CLIENT_CPP_LIB greptime_client_cpp_lib)
 
-# add header file search paths for contrib and third-party projects.
-include_directories(
-  third_party/grpc/include
-  third_party/grpc/third_party/protobuf/src
-  third_party/grpc/third_party/abseil-cpp
-  contrib/greptime-proto/c++
+# specify required proto files.
+set(PROTO_FILE_PATH_PREFIX ${CMAKE_SOURCE_DIR}/contrib/greptime-proto/proto/greptime/v1)
+set(REQUIRED_GREPTIME_PROTO_FILES
+  ${PROTO_FILE_PATH_PREFIX}/common.proto
+  ${PROTO_FILE_PATH_PREFIX}/database.proto
+  ${PROTO_FILE_PATH_PREFIX}/row.proto
 )
 
-# build the project tree by specifying all sub-projects as sub-directories.
-#
-# warning: add all third-party and contrib projects directly by specifying their
-# relative paths rather than creating CMakeLists.txt files in their
-# corresponding directories.
+# find protobuf in the given path.
+set(PROTOBUF_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/third_party/protobuf)
+set(CMAKE_PREFIX_PATH ${PROTOBUF_PATH})
+find_package(Protobuf REQUIRED)
+include_directories(${Protobuf_INCLUDE_DIRS})
+
+# feed the required greptime protobuf files to the found protobuf to generate c++ proto files.
+# the generated c++ source files are referenced by the CPP_PROTO_SRCS variable 
+# while the generated c++ header files are referenced by the CPP_PROTO_HDRS variable.
+# the generated files are placed into the Protobuf_GENERATE_CPP_OUT_DIR path.
+set(Protobuf_GENERATE_CPP_OUT_DIR ${CMAKE_SOURCE_DIR}/proto)
+protobuf_generate_cpp(CPP_PROTO_SRCS CPP_PROTO_HDRS ${REQUIRED_GREPTIME_PROTO_FILES})
+
+# process sub-projects recursively.
 add_subdirectory(third_party/grpc)
-add_subdirectory(contrib/greptime-proto/c++)
 add_subdirectory(src)
 add_subdirectory(examples)

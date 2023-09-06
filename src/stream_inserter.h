@@ -22,18 +22,13 @@
 #include <thread>              // std::thread
 #include <vector>              // std::vector
 
-#include "greptime/v1/database.grpc.pb.h"  // greptime database
-#include "greptime/v1/database.pb.h"       // greptime request, greptime response, row insert request
-#include "grpc/status.h"                   // status
-#include "grpcpp/client_context.h"         // client context
-#include "grpcpp/support/sync_stream.h"    // client writer
+#include "grpc/status.h"                 // status
+#include "grpcpp/client_context.h"       // client context
+#include "grpcpp/support/sync_stream.h"  // client writer
+#include "proto/database.grpc.pb.h"      // greptime database
+#include "proto/database.pb.h"           // greptime request, greptime response, row insert request
 
 namespace greptime {
-
-using greptime::v1::GreptimeDatabase;
-using greptime::v1::GreptimeRequest;
-using greptime::v1::GreptimeResponse;
-using greptime::v1::RowInsertRequest;
 
 class StreamInserter {
   // FIXME(niebayes): prove the reasonableness of these two magic numbers.

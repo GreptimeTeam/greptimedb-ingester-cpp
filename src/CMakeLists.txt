@@ -13,14 +13,23 @@
 # the License.
 
 include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${Protobuf_GENERATE_CPP_OUT_DIR}
   ${CMAKE_SOURCE_DIR}/third_party/grpc/grpcpp
-  ${CMAKE_SOURCE_DIR}/contrib/greptime-proto/c++
 )
+
 add_library(${GREPTIME_CLIENT_CPP_LIB}
   db_client.cc
   stream_inserter.cc
 )
+
 target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
   grpc
-  greptime_proto_cpp_lib
 )
+
+# FIXME(niebayes): why the following codes incur issues?
+# set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc)
+# find_package(gRPC REQUIRED)
+# target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
+#   gRPC::gRPC
+# )
