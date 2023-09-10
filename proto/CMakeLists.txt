@@ -19,15 +19,20 @@ set(INPUT_PROTO_FILES
   ${INPUT_PROTO_FILE_PATH}/database.proto
   ${INPUT_PROTO_FILE_PATH}/row.proto
 )
+message("input proto files: ${INPUT_PROTO_FILES}")
 
 # find the required protobuf package within the project.
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
-find_package(Protobuf REQUIRED)
+find_package(Protobuf QUIET)
 
 # compile the input proto files using the Protobuf_PROTOC_EXECUTABLE executable which is found 
 # by the previous `find_package` command.
 # the generated .h and .cc files can be referenced by the PROTO_SRCS and PROTO_HDRS variables.
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${REQUIRED_GREPTIME_PROTO_FILES})
+add_custom_target(
+  GENERATE_CPP_PROTO_FILES
+  COMMAND protobuf_generate_cpp PROTO_SRCS PROTO_HDRS ${INPUT_PROTO_FILES}
+  COMMAND add_library ${GREPTIME_PROTO_CPP_LIB} ${PROTO_SRCS}
+)
 
 # compile the proto source files into a library.
-add_library(${GREPTIME_PROTO_CPP_LIB} ${PROTO_SRCS})
+# add_library(${GREPTIME_PROTO_CPP_LIB} ${PROTO_SRCS})

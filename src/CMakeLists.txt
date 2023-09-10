@@ -21,7 +21,7 @@ include_directories(
 # find the grpc package with the config mode since the grpc library only provides a gRPCConfig.cmake.in file.
 # see: https://cmake.org/cmake/help/latest/command/find_package.html#search-modes
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
-find_package(gRPC CONFIG REQUIRED)
+find_package(gRPC QUIET CONFIG)
 
 add_library(${GREPTIME_CLIENT_CPP_LIB}
   db_client.cc
