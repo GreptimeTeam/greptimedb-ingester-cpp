@@ -23,13 +23,13 @@ add_library(${GREPTIME_CLIENT_CPP_LIB}
   stream_inserter.cc
 )
 
+# set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc)
 target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
   grpc
 )
 
 # FIXME(niebayes): why the following codes incur issues?
-# set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc)
-# find_package(gRPC REQUIRED)
+# find_package(grpc REQUIRED)
 # target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
-#   gRPC::gRPC
+#   grpc
 # )

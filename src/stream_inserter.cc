@@ -51,8 +51,8 @@ void StreamInserter::feed_one(const RowInsertRequest& row_insert_request) {
   while (pending_que_.size() >= StreamInserter::PENDING_QUEUE_CAPACITY) {
     not_full_cv_.wait(lock, [this] { return this->pending_que_.size() < StreamInserter::PENDING_QUEUE_CAPACITY; });
   }
-  pending_que_.push(row_insert_request);
 
+  pending_que_.push(row_insert_request);
   not_empty_cv_.notify_one();
 }
 
@@ -66,6 +66,7 @@ void StreamInserter::feed_batch(const std::vector<RowInsertRequest>& row_insert_
     for (const RowInsertRequest& row_insert_request : row_insert_request_batch) {
       pending_que_.push(row_insert_request);
     }
+    not_empty_cv_.notify_one();
 
   } else {
     lock.unlock();

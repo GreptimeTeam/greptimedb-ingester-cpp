@@ -1,5 +1,15 @@
 # greptimedb-client-cpp
 
+## Preparation
+
+There are a few procedures you need to accomplish first in order to build the project successfully.
+
+- Initialize all necessary submodules by following the instructions in `docs/submodule_instructions.md`.
+- Build the `protoc` compiler by executing the script `scripts/build_protoc.sh`.
+  - This script builds the `protoc` compiler using the source codes in the `third_party/grpc/third_party/protobuf` submodule.
+- Generate all required cpp protobuf files by executing the script `scripts/generate_cpp_proto.sh`.
+  - This script generates protobuf files by feeding required `.proto` files to the built `proto` compiler.
+
 ## Build
 
 ```bash
@@ -22,5 +32,5 @@ make -j$(nproc)
 cd greptimedb-client-cpp/build/examples
 
 # run the example binary
-./example_client_stream
+./example_stream_inserter
 ```
