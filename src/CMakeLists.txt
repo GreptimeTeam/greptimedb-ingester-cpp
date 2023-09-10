@@ -14,22 +14,21 @@
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${Protobuf_GENERATE_CPP_OUT_DIR}
+  ${CMAKE_SOURCE_DIR}/proto
   ${CMAKE_SOURCE_DIR}/third_party/grpc/grpcpp
 )
+
+# find the grpc package with the config mode since the grpc library only provides a gRPCConfig.cmake.in file.
+# see: https://cmake.org/cmake/help/latest/command/find_package.html#search-modes
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
+find_package(gRPC CONFIG REQUIRED)
 
 add_library(${GREPTIME_CLIENT_CPP_LIB}
   db_client.cc
   stream_inserter.cc
 )
 
-# set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc)
 target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
-  grpc
+  ${GREPTIME_PROTO_CPP_LIB}
+  gRPC
 )
-
-# FIXME(niebayes): why the following codes incur issues?
-# find_package(grpc REQUIRED)
-# target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
-#   grpc
-# )
