@@ -1,39 +1,42 @@
 # Copyright 2023 Greptime Team
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
-cmake_minimum_required (VERSION 3.22)
-project (greptimedb-client-cpp VERSION 0.1 LANGUAGES CXX)
+# set the required min cmake version to 3.13 which was released in 2018. This
+# may hopefully mitigate the compatability issues.
+cmake_minimum_required(VERSION 3.13)
+project(greptimedb_client_cpp VERSION 0.1)
 
-# generate complie_commands.json
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# set the required cpp standard to c++11.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# set project root directory
-set(GREPTIMEDB_CLIENT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
-set(GREPTIMEDB_CLIENT_THIRD_PARTY_INCLUDE_DIR 
-        ${GREPTIMEDB_CLIENT_ROOT_DIR}
-        ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib
-        ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/greptime-proto/c++
-        ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/include
-        ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/abseil-cpp
-        ${GREPTIMEDB_CLIENT_ROOT_DIR}/contrib/grpc/third_party/protobuf/src
-        )
+# set well-known variables to be used by sub-projects.
+set(GREPTIME_PROTO_CPP_LIB greptime_proto_cpp_lib)
+set(GREPTIME_CLIENT_CPP_LIB greptime_client_cpp_lib)
+set(GRPC_INSTALL_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/install)
 
 include_directories(
-        ${GREPTIMEDB_CLIENT_THIRD_PARTY_INCLUDE_DIR}
-        )
+  ${GRPC_INSTALL_PATH}/include
+  ${CMAKE_SOURCE_DIR}/proto
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/examples
+)
 
-add_subdirectory(contrib)
+# the sub-directories' order cannot be channged since cmake processes a
+# CMakeLists.txt file line by line, and processes each sub-directories
+# recursively.
+# add_subdirectory(third_party/grpc)
+add_subdirectory(proto)
 add_subdirectory(src)
 add_subdirectory(examples)

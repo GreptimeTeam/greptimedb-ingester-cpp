@@ -1,10 +1,8 @@
 # IDEA
-
 .idea
-
 .uuid
-
 .a
+
 # Prerequisites
 *.d
 
@@ -52,6 +50,17 @@ CTestTestfile.cmake
 _deps
 cmake-build-debug
 
+# misc.
 .cache
+.DS_Store
 
+# vscode configs.
 .vscode
+
+# target files.
+build
+
+# generated cpp proto files.
+proto/greptime
+proto/prometheus
+proto/substrait_extension
