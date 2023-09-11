@@ -16,6 +16,7 @@
 # see: https://cmake.org/cmake/help/latest/command/find_package.html#search-modes
 # set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build)
 # set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build)
+# set(CMAKE_PREFIX_PATH ${GRPC_INSTALL_PATH})
 # find_package(gRPC REQUIRED)
 
 add_library(${GREPTIME_CLIENT_CPP_LIB}
@@ -25,6 +26,6 @@ add_library(${GREPTIME_CLIENT_CPP_LIB}
 
 target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
   ${GREPTIME_PROTO_CPP_LIB}
-  ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build/libgrpc
-  ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build/libgrpc++
+  ${GRPC_INSTALL_PATH}/lib/libgrpc
+  ${GRPC_INSTALL_PATH}/lib/libgrpc++
 )

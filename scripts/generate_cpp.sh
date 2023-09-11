@@ -10,12 +10,16 @@ cpp_out_dir="${wd}/proto"
 # build grpc
 echo "Building grpc ..."
 cd "third_party/grpc/cmake"
-cd build
-
-# rm -rf build && mkdir build 
 # cd build
-# cmake ../.. -DCMAKE_CXX_STANDARD=11
-# make -j
+
+rm -rf build && mkdir build 
+cd build
+cmake ../..                          \
+  -DCMAKE_CXX_STANDARD=11            \
+  -DgRPC_INSTALL=ON                  \
+  -DCMAKE_INSTALL_PREFIX=../install  
+make -j4  # too many threads might OOM
+make install
 
 protoc_path=$(pwd)/third_party/protobuf
 grpc_cpp_plugin_path=$(pwd)

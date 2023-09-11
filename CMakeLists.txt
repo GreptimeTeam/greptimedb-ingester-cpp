@@ -24,14 +24,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # set well-known variables to be used by sub-projects.
 set(GREPTIME_PROTO_CPP_LIB greptime_proto_cpp_lib)
 set(GREPTIME_CLIENT_CPP_LIB greptime_client_cpp_lib)
+set(GRPC_INSTALL_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/install)
 
 include_directories(
-  third_party/grpc/third_party/abseil-cpp
-  third_party/grpc/third_party/protobuf/src
-  third_party/grpc/include
-  proto
-  src
-  examples
+  ${GRPC_INSTALL_PATH}/include
+  ${CMAKE_SOURCE_DIR}/proto
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/examples
 )
 
 # the sub-directories' order cannot be channged since cmake processes a
