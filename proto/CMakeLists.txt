@@ -12,27 +12,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# specify required input proto files.
-set(INPUT_PROTO_FILE_PATH ${CMAKE_SOURCE_DIR}/contrib/greptime-proto/proto/greptime/v1)
-set(INPUT_PROTO_FILES
-  ${INPUT_PROTO_FILE_PATH}/common.proto
-  ${INPUT_PROTO_FILE_PATH}/database.proto
-  ${INPUT_PROTO_FILE_PATH}/row.proto
-)
-message("input proto files: ${INPUT_PROTO_FILES}")
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc)
 
-# find the required protobuf package within the project.
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
-find_package(Protobuf QUIET)
-
-# compile the input proto files using the Protobuf_PROTOC_EXECUTABLE executable which is found 
-# by the previous `find_package` command.
-# the generated .h and .cc files can be referenced by the PROTO_SRCS and PROTO_HDRS variables.
-add_custom_target(
-  GENERATE_CPP_PROTO_FILES
-  COMMAND protobuf_generate_cpp PROTO_SRCS PROTO_HDRS ${INPUT_PROTO_FILES}
-  COMMAND add_library ${GREPTIME_PROTO_CPP_LIB} ${PROTO_SRCS}
-)
+file(GLOB_RECURSE PROTO_SRCS "*.cc")
 
 # compile the proto source files into a library.
-# add_library(${GREPTIME_PROTO_CPP_LIB} ${PROTO_SRCS})
+add_library(${GREPTIME_PROTO_CPP_LIB} ${PROTO_SRCS})

@@ -17,12 +17,15 @@
 #include <memory>  // std::shared_ptr
 #include <string>  // std::string
 
-#include "grpcpp/channel.h"          // channel
-#include "proto/database.grpc.pb.h"  // greptime database
-#include "proto/database.pb.h"       // greptime response
-#include "stream_inserter.h"         // stream inserter
+#include "greptime/v1/database.grpc.pb.h"  // greptime database
+#include "greptime/v1/database.pb.h"       // greptime response
+#include "grpcpp/channel.h"                // channel
+#include "stream_inserter.h"               // stream inserter
 
 namespace greptime {
+
+using greptime::v1::GreptimeDatabase;
+using greptime::v1::GreptimeResponse;
 
 class DbClient {
   const std::string db_name_;

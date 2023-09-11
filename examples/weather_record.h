@@ -17,9 +17,9 @@
 #include <string>  // std::string
 #include <vector>  // std::vector
 
-#include "proto/common.pb.h"
-#include "proto/database.pb.h"  // row insert request
-#include "proto/row.pb.h"
+#include "greptime/v1/database.pb.h"  // row insert request
+
+using greptime::v1::RowInsertRequest;
 
 // FIXME(niebayes): ensure all the field types are compatible with the ARM
 // platforms.

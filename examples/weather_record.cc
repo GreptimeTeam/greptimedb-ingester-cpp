@@ -19,9 +19,17 @@
 #include <string>   // std::string
 #include <vector>   // std::vector
 
-#include "proto/common.pb.h"    // column data type, semantic type
-#include "proto/database.pb.h"  // row insert request,
-#include "proto/row.pb.h"       // rows, row, value, column schema,
+#include "greptime/v1/common.pb.h"    // column data type, semantic type
+#include "greptime/v1/database.pb.h"  // row insert request,
+#include "greptime/v1/row.pb.h"       // rows, row, value, column schema,
+
+using greptime::v1::ColumnDataType;
+using greptime::v1::ColumnSchema;
+using greptime::v1::Row;
+using greptime::v1::RowInsertRequest;
+using greptime::v1::Rows;
+using greptime::v1::SemanticType;
+using greptime::v1::Value;
 
 WeatherRecord WeatherRecordFactory::make_one() {
   static std::default_random_engine rng;

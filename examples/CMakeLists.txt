@@ -12,13 +12,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/proto
-  ${CMAKE_SOURCE_DIR}/third_party/grpc/include
-  ${CMAKE_SOURCE_DIR}/src
-)
-
 set(EXAMPLE_TARGET example_stream_inserter)
 add_executable(${EXAMPLE_TARGET}
   stream_insert.cc 

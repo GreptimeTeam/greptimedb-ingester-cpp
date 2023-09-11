@@ -12,16 +12,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/proto
-  ${CMAKE_SOURCE_DIR}/third_party/grpc/grpcpp
-)
-
 # find the grpc package with the config mode since the grpc library only provides a gRPCConfig.cmake.in file.
 # see: https://cmake.org/cmake/help/latest/command/find_package.html#search-modes
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
-find_package(gRPC QUIET CONFIG)
+# set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build)
+# set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build)
+# find_package(gRPC REQUIRED)
 
 add_library(${GREPTIME_CLIENT_CPP_LIB}
   db_client.cc
@@ -30,5 +25,6 @@ add_library(${GREPTIME_CLIENT_CPP_LIB}
 
 target_link_libraries(${GREPTIME_CLIENT_CPP_LIB} PRIVATE 
   ${GREPTIME_PROTO_CPP_LIB}
-  gRPC
+  ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build/libgrpc
+  ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build/libgrpc++
 )

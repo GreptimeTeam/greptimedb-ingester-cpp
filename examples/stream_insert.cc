@@ -17,10 +17,14 @@
 #include <vector>    // std::vector
 
 #include "db_client.h"
-#include "grpc/status.h"        // status
-#include "proto/database.pb.h"  // row insert request, greptime database
+#include "greptime/v1/database.pb.h"  // row insert request, greptime database
+#include "grpc/status.h"              // status
 #include "stream_inserter.h"
 #include "weather_record.h"
+
+using greptime::v1::GreptimeDatabase;
+using greptime::v1::GreptimeResponse;
+using greptime::v1::RowInsertRequest;
 
 int main() {
   static const std::string DEFAULT_DATABASE_NAME = "public";

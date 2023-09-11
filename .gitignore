@@ -59,3 +59,8 @@ cmake-build-debug
 
 # target files.
 build
+
+# generated cpp proto files.
+proto/greptime
+proto/prometheus
+proto/substrait_extension
