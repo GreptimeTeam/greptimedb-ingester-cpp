@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <memory>  // std::shared_ptr
+#include <memory>  // std::unique_ptr, std::shared_ptr
 #include <string>  // std::string
 
 #include "greptime/v1/database.grpc.pb.h"  // greptime database

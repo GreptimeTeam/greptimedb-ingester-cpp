@@ -12,13 +12,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# find the grpc package with the config mode since the grpc library only provides a gRPCConfig.cmake.in file.
-# see: https://cmake.org/cmake/help/latest/command/find_package.html#search-modes
-# set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build)
-# set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/third_party/grpc/cmake/build)
-# set(CMAKE_PREFIX_PATH ${GRPC_INSTALL_PATH})
-# find_package(gRPC REQUIRED)
-
 add_library(${GREPTIME_CLIENT_CPP_LIB}
   db_client.cc
   stream_inserter.cc

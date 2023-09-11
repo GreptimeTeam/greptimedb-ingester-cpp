@@ -21,8 +21,8 @@ cmake ../..                          \
 make -j4  # too many threads might OOM
 make install
 
-protoc_path=$(pwd)/third_party/protobuf
-grpc_cpp_plugin_path=$(pwd)
+protoc_path=$(pwd)/../install/bin
+grpc_cpp_plugin_path=$(pwd)/../install/bin
 
 # generate cpp proto files.
 echo "Generating cpp proto files ..."

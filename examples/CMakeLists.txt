@@ -22,6 +22,4 @@ add_executable(${EXAMPLE_TARGET}
 # https://cmake.org/pipermail/cmake/2016-May/063400.html
 target_link_libraries(${EXAMPLE_TARGET} PRIVATE
   ${GREPTIME_CLIENT_CPP_LIB}
-  ${GRPC_INSTALL_PATH}/lib/libgrpc
-  ${GRPC_INSTALL_PATH}/lib/libgrpc++
 )
