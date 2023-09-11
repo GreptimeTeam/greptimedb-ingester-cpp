@@ -16,7 +16,7 @@
 
 #include <cassert>   // assert
 #include <iostream>  // std::cerr, std::endl
-#include <memory>    // std::unique_ptr, std::make_unique
+#include <memory>    // std::unique_ptr
 #include <mutex>     // std::mutex, std::unique_lock
 #include <string>    // std::string
 #include <thread>    // std::thread
@@ -45,7 +45,8 @@ static GreptimeRequest make_greptime_request(const std::string& db_name, RowInse
 
 StreamInserter::StreamInserter(GreptimeResponse* response, const std::string& db_name, GreptimeDatabase::Stub* stub)
     : db_name_{db_name} {
-  grpc_clt_ctx_ = std::make_unique<grpc::ClientContext>();
+  // warning: c++11 has not introduced std::make_unique yet.
+  grpc_clt_ctx_ = std::unique_ptr<grpc::ClientContext>(new grpc::ClientContext());
   grpc_clt_ctx_->set_wait_for_ready(true);
   writer_ = std::move(stub->HandleRequests(grpc_clt_ctx_.get(), response));
 

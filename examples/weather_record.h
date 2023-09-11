@@ -24,7 +24,7 @@ using greptime::v1::RowInsertRequest;
 // FIXME(niebayes): ensure all the field types are compatible with the ARM
 // platforms.
 struct WeatherRecord {
-  static inline const std::string TABLE_NAME = "EXAMPLE_WEATHER_TABLE";
+  static const std::string TABLE_NAME;
   uint64_t timestamp;
   std::string collector_id;
   float temperature;
@@ -33,8 +33,8 @@ struct WeatherRecord {
 };
 
 class WeatherRecordFactory {
-  static inline const std::string COLLECTOR_ID_PREFIX = "COLLECTOR_ID_";
-  static inline uint64_t last_timestamp = 1000000;
+  static const std::string COLLECTOR_ID_PREFIX;
+  static uint64_t last_timestamp;
 
  public:
   static WeatherRecord make_one();

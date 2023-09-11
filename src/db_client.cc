@@ -34,9 +34,9 @@ DbClient::DbClient(const std::string& db_name, const std::string& db_grpc_endpoi
       channel_{grpc::CreateChannel(db_grpc_endpoint, grpc::InsecureChannelCredentials())},
       stub_{GreptimeDatabase::NewStub(channel_)} {}
 
-StreamInserter DbClient::new_stream_inserter(GreptimeResponse* response) {
+std::unique_ptr<StreamInserter> DbClient::new_stream_inserter(GreptimeResponse* response) {
   assert(response != nullptr && "invalid arg: response = nullptr");
-  return StreamInserter(response, db_name_, this->stub_.get());
+  return std::unique_ptr<StreamInserter>(new StreamInserter(response, db_name_, this->stub_.get()));
 }
 
 }  // namespace greptime

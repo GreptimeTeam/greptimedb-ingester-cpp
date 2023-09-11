@@ -29,7 +29,7 @@ using greptime::v1::RowInsertRequest;
 int main() {
   static const std::string DEFAULT_DATABASE_NAME = "public";
   static const std::string DEFAULT_GRPC_ENDPOINT = "localhost:4001";
-  static const size_t NUM_EXAMPLE_RECORDS = 5;
+  static constexpr size_t NUM_EXAMPLE_RECORDS = 5;
 
   greptime::DbClient db_client(DEFAULT_DATABASE_NAME, DEFAULT_GRPC_ENDPOINT);
 
@@ -37,12 +37,12 @@ int main() {
   const RowInsertRequest row_insert_request = build_row_insert_request_from_records(weather_records);
 
   GreptimeResponse response;
-  greptime::StreamInserter stream_inserter = db_client.new_stream_inserter(&response);
+  std::unique_ptr<greptime::StreamInserter> stream_inserter = db_client.new_stream_inserter(&response);
 
-  stream_inserter.feed_one(row_insert_request);
-  stream_inserter.writes_done();
+  stream_inserter->feed_one(row_insert_request);
+  stream_inserter->writes_done();
 
-  const grpc::Status status = stream_inserter.finish();
+  const grpc::Status status = stream_inserter->finish();
 
   if (status.ok()) {
     std::cout << "Success: " << response.affected_rows().value() << " rows are inserted into the table "

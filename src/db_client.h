@@ -35,7 +35,7 @@ class DbClient {
  public:
   DbClient(const std::string& db_name, const std::string& db_grpc_endpoint);
 
-  StreamInserter new_stream_inserter(GreptimeResponse* response);
+  std::unique_ptr<StreamInserter> new_stream_inserter(GreptimeResponse* response);
 };
 
 }  // namespace greptime

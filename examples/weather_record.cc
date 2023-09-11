@@ -31,6 +31,12 @@ using greptime::v1::Rows;
 using greptime::v1::SemanticType;
 using greptime::v1::Value;
 
+// warning: c++17 downwards has no support for `static inline`, so we have to initialize static data members at exactly
+// one source file.
+const std::string WeatherRecord::TABLE_NAME = "EXAMPLE_WEATHER_TABLE";
+const std::string WeatherRecordFactory::COLLECTOR_ID_PREFIX = "COLLECTOR_ID_";
+uint64_t WeatherRecordFactory::last_timestamp = 1000000;
+
 WeatherRecord WeatherRecordFactory::make_one() {
   static std::default_random_engine rng;
   // FIXME(niebayes): replace magic numbers with meaningful macros or consts.
